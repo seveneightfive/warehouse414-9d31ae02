@@ -1,1 +1,7 @@
 project_id = "skokaohsaaawskrhfghr"
+
+[functions.upload-product-images]
+verify_jwt = false
+
+[functions.delete-product-image]
+verify_jwt = false

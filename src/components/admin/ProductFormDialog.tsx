@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useAdminProducts, ProductFormData, useProductImages } from '@/hooks/useAdminProducts';
+import { useAdminProducts, ProductFormData } from '@/hooks/useAdminProducts';
 import { useAdminCategories, useAdminSubcategories, useAdminDesigners, useAdminMakers, useAdminStyles, useAdminPeriods, useAdminCountries } from '@/hooks/useAdminAttributes';
+import { useProductImageManager } from '@/hooks/useProductImageManager';
+import { ProductImageUploader } from '@/components/admin/ProductImageUploader';
 import {
   Dialog,
   DialogContent,
@@ -29,7 +31,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Upload, X } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -83,6 +85,15 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
   const { data: countries } = useAdminCountries();
   
   const isEditing = !!product;
+  const [isUploading, setIsUploading] = useState(false);
+  
+  const {
+    images,
+    deleteImage,
+    reorderImages,
+    setFeaturedImage,
+    refreshImages,
+  } = useProductImageManager(product?.id);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -212,10 +223,11 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <Tabs defaultValue="basic" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="basic">Basic</TabsTrigger>
                 <TabsTrigger value="attributes">Attributes</TabsTrigger>
                 <TabsTrigger value="dimensions">Dimensions</TabsTrigger>
+                <TabsTrigger value="images" disabled={!isEditing}>Images</TabsTrigger>
                 <TabsTrigger value="links">Links</TabsTrigger>
               </TabsList>
 
@@ -767,6 +779,34 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
                     />
                   </div>
                 </div>
+              </TabsContent>
+
+              <TabsContent value="images" className="space-y-4 pt-4">
+                {isEditing ? (
+                  <ProductImageUploader
+                    productId={product.id}
+                    sku={form.watch('sku') || product.sku || ''}
+                    images={images}
+                    featuredImageUrl={form.watch('featured_image_url') || product.featured_image_url}
+                    onImagesUploaded={refreshImages}
+                    onImageDeleted={async (imageId, imageUrl) => {
+                      await deleteImage.mutateAsync({ imageId, imageUrl });
+                    }}
+                    onSetFeatured={(imageUrl) => {
+                      form.setValue('featured_image_url', imageUrl);
+                      setFeaturedImage.mutate(imageUrl);
+                    }}
+                    onReorder={async (reorderedImages) => {
+                      await reorderImages.mutateAsync(reorderedImages);
+                    }}
+                    isUploading={isUploading}
+                    setIsUploading={setIsUploading}
+                  />
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Save the product first to upload images.
+                  </p>
+                )}
               </TabsContent>
 
               <TabsContent value="links" className="space-y-4 pt-4">

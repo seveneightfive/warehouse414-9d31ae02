@@ -51,9 +51,8 @@ const formSchema = z.object({
   maker_attribution: z.string().optional(),
   style_id: z.string().optional(),
   period_id: z.string().optional(),
-  period_attribution: z.string().optional(),
   country_id: z.string().optional(),
-  year_created: z.coerce.number().optional(),
+  year_created: z.string().optional(),
   product_width: z.coerce.number().optional(),
   product_height: z.coerce.number().optional(),
   product_depth: z.coerce.number().optional(),
@@ -127,7 +126,6 @@ export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'b
         maker_attribution: product.maker_attribution || undefined,
         style_id: product.style_id || undefined,
         period_id: product.period_id || undefined,
-        period_attribution: product.period_attribution || undefined,
         country_id: product.country_id || undefined,
         year_created: product.year_created || undefined,
         product_width: product.product_width || undefined,
@@ -189,7 +187,6 @@ export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'b
       maker_attribution: data.maker_attribution === 'none' ? undefined : data.maker_attribution,
       style_id: data.style_id === 'none' ? undefined : data.style_id,
       period_id: data.period_id === 'none' ? undefined : data.period_id,
-      period_attribution: data.period_attribution === 'none' ? undefined : data.period_attribution,
       country_id: data.country_id === 'none' ? undefined : data.country_id,
       year_created: data.year_created,
       product_width: data.product_width,
@@ -397,7 +394,14 @@ export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'b
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Category</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value || 'none'}>
+                        <Select 
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                            // Reset subcategory when category changes
+                            form.setValue('subcategory_id', 'none');
+                          }} 
+                          value={field.value || 'none'}
+                        >
                           <FormControl>
                             <SelectTrigger className="border-foreground">
                               <SelectValue placeholder="Select category" />
@@ -419,27 +423,37 @@ export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'b
                   <FormField
                     control={form.control}
                     name="subcategory_id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Subcategory</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value || 'none'}>
-                          <FormControl>
-                            <SelectTrigger className="border-foreground">
-                              <SelectValue placeholder="Select subcategory" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="none">None</SelectItem>
-                            {subcategories.map((sub) => (
-                              <SelectItem key={sub.id} value={sub.id}>
-                                {sub.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    render={({ field }) => {
+                      const selectedCategoryId = form.watch('category_id');
+                      const filteredSubcategories = subcategories.filter(
+                        (sub) => sub.category_id === selectedCategoryId
+                      );
+                      return (
+                        <FormItem>
+                          <FormLabel>Subcategory</FormLabel>
+                          <Select 
+                            onValueChange={field.onChange} 
+                            value={field.value || 'none'}
+                            disabled={!selectedCategoryId || selectedCategoryId === 'none'}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="border-foreground">
+                                <SelectValue placeholder="Select subcategory" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="none">None</SelectItem>
+                              {filteredSubcategories.map((sub) => (
+                                <SelectItem key={sub.id} value={sub.id}>
+                                  {sub.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
                 </div>
 
@@ -571,56 +585,31 @@ export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'b
                   )}
                 />
 
-                <div className="grid grid-cols-3 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="period_id"
-                    render={({ field }) => (
-                      <FormItem className="col-span-2">
-                        <FormLabel>Period/Era</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value || 'none'}>
-                          <FormControl>
-                            <SelectTrigger className="border-foreground">
-                              <SelectValue placeholder="Select period" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="none">None</SelectItem>
-                            {periods.map((p) => (
-                              <SelectItem key={p.id} value={p.id}>
-                                {p.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="period_attribution"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Attribution</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value || 'none'}>
-                          <FormControl>
-                            <SelectTrigger className="border-foreground">
-                              <SelectValue placeholder="None" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="none">None</SelectItem>
-                            <SelectItem value="attributed to">Attributed to</SelectItem>
-                            <SelectItem value="by">By</SelectItem>
-                            <SelectItem value="in the style of">In the style of</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                <FormField
+                  control={form.control}
+                  name="period_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Period/Era</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value || 'none'}>
+                        <FormControl>
+                          <SelectTrigger className="border-foreground">
+                            <SelectValue placeholder="Select period" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="none">None</SelectItem>
+                          {periods.map((p) => (
+                            <SelectItem key={p.id} value={p.id}>
+                              {p.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={form.control}
@@ -655,7 +644,7 @@ export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'b
                     <FormItem>
                       <FormLabel>Year Created</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} className="border-foreground" />
+                        <Input {...field} className="border-foreground" placeholder="e.g., 1960s, circa 1975, early 20th century" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

@@ -341,7 +341,7 @@ export type Database = {
           subcategory_id: string | null
           tags: string[] | null
           updated_at: string
-          year_created: number | null
+          year_created: string | null
         }
         Insert: {
           box_depth?: number | null
@@ -381,7 +381,7 @@ export type Database = {
           subcategory_id?: string | null
           tags?: string[] | null
           updated_at?: string
-          year_created?: number | null
+          year_created?: string | null
         }
         Update: {
           box_depth?: number | null
@@ -421,7 +421,7 @@ export type Database = {
           subcategory_id?: string | null
           tags?: string[] | null
           updated_at?: string
-          year_created?: number | null
+          year_created?: string | null
         }
         Relationships: [
           {

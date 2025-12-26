@@ -24,7 +24,7 @@ export interface ProductFormData {
   period_id?: string;
   period_attribution?: string;
   country_id?: string;
-  year_created?: number;
+  year_created?: string;
   product_width?: number;
   product_height?: number;
   product_depth?: number;

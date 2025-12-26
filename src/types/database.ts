@@ -70,7 +70,7 @@ export interface Product {
   short_description: string | null;
   long_description: string | null;
   price: number | null;
-  year_created: number | null;
+  year_created: string | null;
   product_width: number | null;
   product_height: number | null;
   product_depth: number | null;

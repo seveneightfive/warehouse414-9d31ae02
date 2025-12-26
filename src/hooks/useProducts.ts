@@ -70,6 +70,17 @@ export const useProducts = (filters: FilterState = {}) => {
         }
       }
 
+      if (filters.period) {
+        const { data: periodData } = await supabase
+          .from('periods')
+          .select('id')
+          .eq('slug', filters.period)
+          .single();
+        if (periodData) {
+          query = query.eq('period_id', periodData.id);
+        }
+      }
+
       if (filters.yearFrom) {
         query = query.gte('year_created', filters.yearFrom);
       }

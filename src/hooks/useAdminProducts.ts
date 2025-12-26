@@ -15,7 +15,9 @@ export interface ProductFormData {
   category_id?: string;
   subcategory_id?: string;
   designer_id?: string;
+  designer_attribution?: string;
   maker_id?: string;
+  maker_attribution?: string;
   style_id?: string;
   year_created?: number;
   product_width?: number;

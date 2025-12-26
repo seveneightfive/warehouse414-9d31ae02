@@ -68,7 +68,9 @@ export interface Product {
   featured_image_url: string | null;
   status: ProductStatus;
   designer_id: string | null;
+  designer_attribution: string | null;
   maker_id: string | null;
+  maker_attribution: string | null;
   category_id: string | null;
   subcategory_id: string | null;
   style_id: string | null;

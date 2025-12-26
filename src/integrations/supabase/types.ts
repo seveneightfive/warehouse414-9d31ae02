@@ -266,6 +266,7 @@ export type Database = {
           category_id: string | null
           chairish_url: string | null
           created_at: string
+          designer_attribution: string | null
           designer_id: string | null
           dimension_notes: string | null
           ebay_url: string | null
@@ -273,6 +274,7 @@ export type Database = {
           firstdibs_url: string | null
           id: string
           long_description: string | null
+          maker_attribution: string | null
           maker_id: string | null
           materials: string | null
           name: string
@@ -299,6 +301,7 @@ export type Database = {
           category_id?: string | null
           chairish_url?: string | null
           created_at?: string
+          designer_attribution?: string | null
           designer_id?: string | null
           dimension_notes?: string | null
           ebay_url?: string | null
@@ -306,6 +309,7 @@ export type Database = {
           firstdibs_url?: string | null
           id?: string
           long_description?: string | null
+          maker_attribution?: string | null
           maker_id?: string | null
           materials?: string | null
           name: string
@@ -332,6 +336,7 @@ export type Database = {
           category_id?: string | null
           chairish_url?: string | null
           created_at?: string
+          designer_attribution?: string | null
           designer_id?: string | null
           dimension_notes?: string | null
           ebay_url?: string | null
@@ -339,6 +344,7 @@ export type Database = {
           firstdibs_url?: string | null
           id?: string
           long_description?: string | null
+          maker_attribution?: string | null
           maker_id?: string | null
           materials?: string | null
           name?: string

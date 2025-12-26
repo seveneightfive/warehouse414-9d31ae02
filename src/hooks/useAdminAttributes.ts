@@ -314,3 +314,54 @@ export function useAdminColors() {
 
   return { data: query.data || [], isLoading: query.isLoading, create };
 }
+
+export function useAdminCountries() {
+  const queryClient = useQueryClient();
+
+  const query = useQuery({
+    queryKey: ['admin-countries'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('countries')
+        .select('*')
+        .order('name');
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const create = useMutation({
+    mutationFn: async ({ name, slug, code }: { name: string; slug: string; code?: string }) => {
+      const { error } = await supabase.from('countries').insert({ name, slug, code });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-countries'] });
+      toast.success('Country created');
+    },
+  });
+
+  const update = useMutation({
+    mutationFn: async ({ id, name, slug, code }: { id: string; name: string; slug: string; code?: string }) => {
+      const { error } = await supabase.from('countries').update({ name, slug, code }).eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-countries'] });
+      toast.success('Country updated');
+    },
+  });
+
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('countries').delete().eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-countries'] });
+      toast.success('Country deleted');
+    },
+  });
+
+  return { data: query.data || [], isLoading: query.isLoading, create, update, remove };
+}

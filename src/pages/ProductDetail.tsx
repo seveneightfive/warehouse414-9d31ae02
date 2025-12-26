@@ -164,6 +164,13 @@ const ProductDetail = () => {
                   </Badge>
                 </Link>
               )}
+              {product.country && (
+                <Link to={`/catalog?country=${product.country.slug}`}>
+                  <Badge variant="outline" className="font-body hover:bg-secondary cursor-pointer">
+                    {product.country.name}
+                  </Badge>
+                </Link>
+              )}
               {product.year_created && (
                 <Badge variant="outline" className="font-body">
                   c. {product.year_created}

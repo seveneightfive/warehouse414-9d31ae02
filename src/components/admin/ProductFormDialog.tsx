@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAdminProducts, ProductFormData, useProductImages } from '@/hooks/useAdminProducts';
-import { useAdminCategories, useAdminSubcategories, useAdminDesigners, useAdminMakers, useAdminStyles, useAdminPeriods } from '@/hooks/useAdminAttributes';
+import { useAdminCategories, useAdminSubcategories, useAdminDesigners, useAdminMakers, useAdminStyles, useAdminPeriods, useAdminCountries } from '@/hooks/useAdminAttributes';
 import {
   Dialog,
   DialogContent,
@@ -49,6 +49,7 @@ const formSchema = z.object({
   style_id: z.string().optional(),
   period_id: z.string().optional(),
   period_attribution: z.string().optional(),
+  country_id: z.string().optional(),
   year_created: z.coerce.number().optional(),
   product_width: z.coerce.number().optional(),
   product_height: z.coerce.number().optional(),
@@ -79,6 +80,7 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
   const { data: makers } = useAdminMakers();
   const { data: styles } = useAdminStyles();
   const { data: periods } = useAdminPeriods();
+  const { data: countries } = useAdminCountries();
   
   const isEditing = !!product;
 
@@ -111,6 +113,7 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
         style_id: product.style_id || undefined,
         period_id: product.period_id || undefined,
         period_attribution: product.period_attribution || undefined,
+        country_id: product.country_id || undefined,
         year_created: product.year_created || undefined,
         product_width: product.product_width || undefined,
         product_height: product.product_height || undefined,
@@ -170,6 +173,7 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
       style_id: data.style_id === 'none' ? undefined : data.style_id,
       period_id: data.period_id === 'none' ? undefined : data.period_id,
       period_attribution: data.period_attribution === 'none' ? undefined : data.period_attribution,
+      country_id: data.country_id === 'none' ? undefined : data.country_id,
       year_created: data.year_created,
       product_width: data.product_width,
       product_height: data.product_height,
@@ -585,6 +589,32 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
                     )}
                   />
                 </div>
+
+                <FormField
+                  control={form.control}
+                  name="country_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Country of Origin</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value || 'none'}>
+                        <FormControl>
+                          <SelectTrigger className="border-foreground">
+                            <SelectValue placeholder="Select country" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="none">None</SelectItem>
+                          {countries.map((c) => (
+                            <SelectItem key={c.id} value={c.id}>
+                              {c.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={form.control}

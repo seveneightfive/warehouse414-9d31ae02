@@ -26,6 +26,7 @@ import {
   Tag,
   Layers,
   Calendar,
+  Globe,
 } from 'lucide-react';
 
 const menuItems = [
@@ -42,6 +43,7 @@ const attributeItems = [
   { title: 'Categories', url: '/admin/categories', icon: Layers },
   { title: 'Styles', url: '/admin/styles', icon: Palette },
   { title: 'Periods', url: '/admin/periods', icon: Calendar },
+  { title: 'Countries', url: '/admin/countries', icon: Globe },
 ];
 
 export function AdminSidebar() {

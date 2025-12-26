@@ -46,6 +46,7 @@ export const useProductActions = () => {
       const expiresAt = new Date();
       expiresAt.setHours(expiresAt.getHours() + holdDurationHours);
 
+      // Insert hold - trigger will automatically update product status to 'on_hold'
       const { error } = await supabase.from('product_holds').insert({
         product_id: data.productId,
         customer_name: data.customerName,
@@ -56,12 +57,6 @@ export const useProductActions = () => {
       });
 
       if (error) throw error;
-
-      // Update product status
-      await supabase
-        .from('products')
-        .update({ status: 'on_hold' })
-        .eq('id', data.productId);
     },
     onSuccess: () => {
       toast({

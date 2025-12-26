@@ -36,13 +36,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
         )}
         
         {/* Status Badge */}
-        {product.status !== 'available' && (
-          <Badge 
-            variant={product.status === 'on_hold' ? 'secondary' : 'default'}
-            className="absolute top-3 left-3 font-body uppercase tracking-wider text-xs"
-          >
+        {(product.status === 'on_hold' || product.status === 'sold') && (
+          <div className="absolute top-3 left-3 bg-black text-white px-3 py-1 text-xs font-body uppercase tracking-wider">
             {product.status === 'on_hold' ? 'On Hold' : 'Sold'}
-          </Badge>
+          </div>
         )}
 
         {/* Cross-listing badges */}

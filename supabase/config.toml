@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.delete-product-image]
 verify_jwt = false
+
+[functions.bulk-import-designers]
+verify_jwt = false

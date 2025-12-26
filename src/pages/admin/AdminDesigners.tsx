@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { useAdminDesigners } from '@/hooks/useAdminAttributes';
 import { Button } from '@/components/ui/button';
@@ -17,9 +17,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Plus, MoreHorizontal, Pencil, Trash2, Search } from 'lucide-react';
+import { Plus, MoreHorizontal, Pencil, Trash2, Search, Upload } from 'lucide-react';
 import { AttributeFormDialog } from '@/components/admin/AttributeFormDialog';
 import { DeleteConfirmDialog } from '@/components/admin/DeleteConfirmDialog';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
 
 
 export default function AdminDesigners() {
@@ -28,6 +31,90 @@ export default function AdminDesigners() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<{ id: string; name: string; slug: string; about?: string | null } | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isImporting, setIsImporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
+
+  const parseCSV = (text: string) => {
+    const lines = text.split('\n');
+    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+    
+    const designers: { name: string; slug: string; about?: string }[] = [];
+    
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      
+      // Handle CSV with quoted fields containing commas
+      const values: string[] = [];
+      let current = '';
+      let inQuotes = false;
+      
+      for (let j = 0; j < line.length; j++) {
+        const char = line[j];
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          values.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      values.push(current.trim());
+      
+      const nameIdx = headers.indexOf('name');
+      const slugIdx = headers.indexOf('slug');
+      const aboutIdx = headers.indexOf('about');
+      
+      if (nameIdx !== -1 && slugIdx !== -1 && values[nameIdx] && values[slugIdx]) {
+        designers.push({
+          name: values[nameIdx],
+          slug: values[slugIdx],
+          about: aboutIdx !== -1 ? values[aboutIdx] || undefined : undefined,
+        });
+      }
+    }
+    
+    return designers;
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsImporting(true);
+    try {
+      const text = await file.text();
+      const parsedDesigners = parseCSV(text);
+      
+      if (parsedDesigners.length === 0) {
+        toast.error('No valid designers found in CSV');
+        return;
+      }
+
+      toast.info(`Importing ${parsedDesigners.length} designers...`);
+
+      const { data, error } = await supabase.functions.invoke('bulk-import-designers', {
+        body: { designers: parsedDesigners },
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ['admin-designers'] });
+    } catch (error: any) {
+      console.error('Import error:', error);
+      toast.error(error.message || 'Failed to import designers');
+    } finally {
+      setIsImporting(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
 
   const filtered = designers.filter(
     (d) =>
@@ -58,10 +145,27 @@ export default function AdminDesigners() {
             <h1 className="font-display text-4xl">Designers</h1>
             <p className="text-muted-foreground">Manage product designers</p>
           </div>
-          <Button onClick={() => { setEditing(null); setFormOpen(true); }}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Designer
-          </Button>
+          <div className="flex gap-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".csv"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+            <Button 
+              variant="outline" 
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isImporting}
+            >
+              <Upload className="mr-2 h-4 w-4" />
+              {isImporting ? 'Importing...' : 'Import CSV'}
+            </Button>
+            <Button onClick={() => { setEditing(null); setFormOpen(true); }}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Designer
+            </Button>
+          </div>
         </div>
 
         <div className="flex items-center gap-4">

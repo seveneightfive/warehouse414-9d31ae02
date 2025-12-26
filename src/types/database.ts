@@ -158,6 +158,7 @@ export interface FilterState {
   category?: string;
   subcategory?: string;
   style?: string;
+  period?: string;
   yearFrom?: number;
   yearTo?: number;
   search?: string;

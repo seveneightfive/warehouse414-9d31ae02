@@ -25,14 +25,8 @@ interface ProductData {
   long_description: string | null;
   materials: string | null;
   featured_image_url: string | null;
-  product_width: number | null;
-  product_height: number | null;
-  product_depth: number | null;
-  product_weight: number | null;
-  box_width: number | null;
-  box_height: number | null;
-  box_depth: number | null;
-  box_weight: number | null;
+  product_dimensions: string | null;
+  box_dimensions: string | null;
   dimension_notes: string | null;
   year_created: string | null;
   sku: string | null;
@@ -69,18 +63,6 @@ const SpecSheetDialog = ({ open, onOpenChange, product, productSlug }: SpecSheet
     }).format(price);
   };
 
-  const formatDimensions = (w: number | null, h: number | null, d: number | null, weight: number | null = null) => {
-    if (!w && !h && !d && !weight) return null;
-    const parts = [];
-    if (w) parts.push(`${w}"W`);
-    if (h) parts.push(`${h}"H`);
-    if (d) parts.push(`${d}"D`);
-    const dimStr = parts.join(' × ');
-    if (weight) {
-      return dimStr ? `${dimStr} • ${weight} lbs` : `${weight} lbs`;
-    }
-    return dimStr;
-  };
 
   const loadImageAsBase64 = (url: string): Promise<string | null> => {
     return new Promise((resolve) => {
@@ -123,8 +105,8 @@ const SpecSheetDialog = ({ open, onOpenChange, product, productSlug }: SpecSheet
       console.error("Error saving spec sheet download:", err);
     }
 
-    const productDimensions = formatDimensions(product.product_width, product.product_height, product.product_depth, product.product_weight);
-    const boxDimensions = formatDimensions(product.box_width, product.box_height, product.box_depth, product.box_weight);
+    const productDimensions = product.product_dimensions;
+    const boxDimensions = product.box_dimensions;
 
     // Create PDF
     const pdf = new jsPDF({

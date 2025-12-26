@@ -53,15 +53,8 @@ const formSchema = z.object({
   period_id: z.string().optional(),
   country_id: z.string().optional(),
   year_created: z.string().optional(),
-  product_width: z.coerce.number().optional(),
-  product_height: z.coerce.number().optional(),
-  product_depth: z.coerce.number().optional(),
-  product_weight: z.coerce.number().optional(),
-  dimension_notes: z.string().optional(),
-  box_width: z.coerce.number().optional(),
-  box_height: z.coerce.number().optional(),
-  box_depth: z.coerce.number().optional(),
-  box_weight: z.coerce.number().optional(),
+  product_dimensions: z.string().optional(),
+  box_dimensions: z.string().optional(),
   featured_image_url: z.string().optional(),
   firstdibs_url: z.string().optional(),
   chairish_url: z.string().optional(),
@@ -128,15 +121,8 @@ export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'b
         period_id: product.period_id || undefined,
         country_id: product.country_id || undefined,
         year_created: product.year_created || undefined,
-        product_width: product.product_width || undefined,
-        product_height: product.product_height || undefined,
-        product_depth: product.product_depth || undefined,
-        product_weight: product.product_weight || undefined,
-        dimension_notes: product.dimension_notes || '',
-        box_width: product.box_width || undefined,
-        box_height: product.box_height || undefined,
-        box_depth: product.box_depth || undefined,
-        box_weight: product.box_weight || undefined,
+        product_dimensions: product.product_dimensions || '',
+        box_dimensions: product.box_dimensions || '',
         featured_image_url: product.featured_image_url || '',
         firstdibs_url: product.firstdibs_url || '',
         chairish_url: product.chairish_url || '',
@@ -189,15 +175,8 @@ export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'b
       period_id: data.period_id === 'none' ? undefined : data.period_id,
       country_id: data.country_id === 'none' ? undefined : data.country_id,
       year_created: data.year_created,
-      product_width: data.product_width,
-      product_height: data.product_height,
-      product_depth: data.product_depth,
-      product_weight: data.product_weight,
-      dimension_notes: data.dimension_notes,
-      box_width: data.box_width,
-      box_height: data.box_height,
-      box_depth: data.box_depth,
-      box_weight: data.box_weight,
+      product_dimensions: data.product_dimensions,
+      box_dimensions: data.box_dimensions,
       featured_image_url: data.featured_image_url,
       firstdibs_url: data.firstdibs_url,
       chairish_url: data.chairish_url,
@@ -235,15 +214,31 @@ export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'b
               </TabsList>
 
               <TabsContent value="basic" className="space-y-4 pt-4">
-                <div className="grid grid-cols-2 gap-4">
+                {/* Name - Full Width */}
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name *</FormLabel>
+                      <FormControl>
+                        <Input {...field} className="border-foreground" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Price, SKU, Status - 33% each */}
+                <div className="grid grid-cols-3 gap-4">
                   <FormField
                     control={form.control}
-                    name="name"
+                    name="price"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Name *</FormLabel>
+                        <FormLabel>Price</FormLabel>
                         <FormControl>
-                          <Input {...field} className="border-foreground" />
+                          <Input type="number" {...field} className="border-foreground" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -256,23 +251,7 @@ export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'b
                       <FormItem>
                         <FormLabel>SKU</FormLabel>
                         <FormControl>
-                          <Input {...field} className="border-foreground" placeholder="Product SKU (auto-generates slug)" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="price"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Price</FormLabel>
-                        <FormControl>
-                          <Input type="number" {...field} className="border-foreground" />
+                          <Input {...field} className="border-foreground" placeholder="Product SKU" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -651,141 +630,43 @@ export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'b
               </TabsContent>
 
               <TabsContent value="dimensions" className="space-y-4 pt-4">
-                <div>
-                  <h3 className="font-medium mb-3">Product Dimensions (inches)</h3>
-                  <div className="grid grid-cols-4 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="product_width"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Width</FormLabel>
-                          <FormControl>
-                            <Input type="number" step="0.1" {...field} className="border-foreground" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="product_height"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Height</FormLabel>
-                          <FormControl>
-                            <Input type="number" step="0.1" {...field} className="border-foreground" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="product_depth"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Depth</FormLabel>
-                          <FormControl>
-                            <Input type="number" step="0.1" {...field} className="border-foreground" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="product_weight"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Weight (lbs)</FormLabel>
-                          <FormControl>
-                            <Input type="number" step="0.1" {...field} className="border-foreground" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="mt-4">
-                    <FormField
-                      control={form.control}
-                      name="dimension_notes"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Dimension Notes</FormLabel>
-                          <FormControl>
-                            <Textarea 
-                              {...field} 
-                              rows={2} 
-                              className="border-foreground" 
-                              placeholder="e.g., Seat height: 18 inches. Dimensions are for one chair; set includes two."
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
+                <FormField
+                  control={form.control}
+                  name="product_dimensions"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product Dimensions</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          {...field} 
+                          rows={3} 
+                          className="border-foreground" 
+                          placeholder='e.g., 24"W x 36"H x 18"D, Seat height: 18 inches'
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                <div>
-                  <h3 className="font-medium mb-3">Box/Shipping Dimensions (inches)</h3>
-                  <div className="grid grid-cols-4 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="box_width"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Width</FormLabel>
-                          <FormControl>
-                            <Input type="number" step="0.1" {...field} className="border-foreground" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="box_height"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Height</FormLabel>
-                          <FormControl>
-                            <Input type="number" step="0.1" {...field} className="border-foreground" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="box_depth"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Depth</FormLabel>
-                          <FormControl>
-                            <Input type="number" step="0.1" {...field} className="border-foreground" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="box_weight"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Weight (lbs)</FormLabel>
-                          <FormControl>
-                            <Input type="number" step="0.1" {...field} className="border-foreground" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
+                <FormField
+                  control={form.control}
+                  name="box_dimensions"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Box/Shipping Dimensions</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          {...field} 
+                          rows={3} 
+                          className="border-foreground" 
+                          placeholder='e.g., 28"W x 40"H x 22"D, 45 lbs'
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </TabsContent>
 
               <TabsContent value="images" className="space-y-4 pt-4">

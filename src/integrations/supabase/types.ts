@@ -304,10 +304,7 @@ export type Database = {
       }
       products: {
         Row: {
-          box_depth: number | null
-          box_height: number | null
-          box_weight: number | null
-          box_width: number | null
+          box_dimensions: string | null
           category_id: string | null
           chairish_url: string | null
           country_id: string | null
@@ -329,10 +326,7 @@ export type Database = {
           period_attribution: string | null
           period_id: string | null
           price: number | null
-          product_depth: number | null
-          product_height: number | null
-          product_weight: number | null
-          product_width: number | null
+          product_dimensions: string | null
           short_description: string | null
           sku: string | null
           slug: string
@@ -344,10 +338,7 @@ export type Database = {
           year_created: string | null
         }
         Insert: {
-          box_depth?: number | null
-          box_height?: number | null
-          box_weight?: number | null
-          box_width?: number | null
+          box_dimensions?: string | null
           category_id?: string | null
           chairish_url?: string | null
           country_id?: string | null
@@ -369,10 +360,7 @@ export type Database = {
           period_attribution?: string | null
           period_id?: string | null
           price?: number | null
-          product_depth?: number | null
-          product_height?: number | null
-          product_weight?: number | null
-          product_width?: number | null
+          product_dimensions?: string | null
           short_description?: string | null
           sku?: string | null
           slug: string
@@ -384,10 +372,7 @@ export type Database = {
           year_created?: string | null
         }
         Update: {
-          box_depth?: number | null
-          box_height?: number | null
-          box_weight?: number | null
-          box_width?: number | null
+          box_dimensions?: string | null
           category_id?: string | null
           chairish_url?: string | null
           country_id?: string | null
@@ -409,10 +394,7 @@ export type Database = {
           period_attribution?: string | null
           period_id?: string | null
           price?: number | null
-          product_depth?: number | null
-          product_height?: number | null
-          product_weight?: number | null
-          product_width?: number | null
+          product_dimensions?: string | null
           short_description?: string | null
           sku?: string | null
           slug?: string

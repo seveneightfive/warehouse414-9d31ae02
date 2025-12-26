@@ -28,18 +28,6 @@ const ProductDetail = () => {
     }).format(price);
   };
 
-  const formatDimensions = (w: number | null, h: number | null, d: number | null, weight: number | null = null) => {
-    if (!w && !h && !d && !weight) return null;
-    const parts = [];
-    if (w) parts.push(`${w}"W`);
-    if (h) parts.push(`${h}"H`);
-    if (d) parts.push(`${d}"D`);
-    const dimStr = parts.join(' × ');
-    if (weight) {
-      return dimStr ? `${dimStr} • ${weight} lbs` : `${weight} lbs`;
-    }
-    return dimStr;
-  };
 
   if (isLoading) {
     return (
@@ -75,8 +63,6 @@ const ProductDetail = () => {
     );
   }
 
-  const productDimensions = formatDimensions(product.product_width, product.product_height, product.product_depth, product.product_weight);
-  const boxDimensions = formatDimensions(product.box_width, product.box_height, product.box_depth, product.box_weight);
   const isAvailable = product.status === 'available';
 
   return (
@@ -196,12 +182,12 @@ const ProductDetail = () => {
             )}
 
             {/* Dimensions */}
-            {(productDimensions || boxDimensions || product.dimension_notes) && (
+            {(product.product_dimensions || product.box_dimensions || product.dimension_notes) && (
               <div className="mt-8 p-4 bg-secondary">
                 <h3 className="font-display text-lg mb-3">DIMENSIONS</h3>
-                {productDimensions && (
+                {product.product_dimensions && (
                   <p className="font-body text-sm">
-                    <span className="text-muted-foreground">Product:</span> {productDimensions}
+                    <span className="text-muted-foreground">Product:</span> {product.product_dimensions}
                   </p>
                 )}
                 {product.dimension_notes && (
@@ -209,9 +195,9 @@ const ProductDetail = () => {
                     {product.dimension_notes}
                   </p>
                 )}
-                {boxDimensions && (
+                {product.box_dimensions && (
                   <p className="font-body text-sm mt-1">
-                    <span className="text-muted-foreground">Shipping Box:</span> {boxDimensions}
+                    <span className="text-muted-foreground">Shipping Box:</span> {product.box_dimensions}
                   </p>
                 )}
               </div>

@@ -25,15 +25,8 @@ export interface ProductFormData {
   period_attribution?: string;
   country_id?: string;
   year_created?: string;
-  product_width?: number;
-  product_height?: number;
-  product_depth?: number;
-  product_weight?: number;
-  dimension_notes?: string;
-  box_width?: number;
-  box_height?: number;
-  box_depth?: number;
-  box_weight?: number;
+  product_dimensions?: string;
+  box_dimensions?: string;
   featured_image_url?: string;
   firstdibs_url?: string;
   chairish_url?: string;

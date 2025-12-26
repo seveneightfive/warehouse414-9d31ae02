@@ -42,7 +42,7 @@ const formSchema = z.object({
   long_description: z.string().optional(),
   notes: z.string().optional(),
   price: z.coerce.number().optional(),
-  status: z.enum(['available', 'on_hold', 'sold']),
+  status: z.enum(['available', 'on_hold', 'sold', 'inventory']),
   category_id: z.string().optional(),
   subcategory_id: z.string().optional(),
   designer_id: z.string().optional(),
@@ -294,6 +294,7 @@ export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'b
                             <SelectItem value="available">Available</SelectItem>
                             <SelectItem value="on_hold">On Hold</SelectItem>
                             <SelectItem value="sold">Sold</SelectItem>
+                            <SelectItem value="inventory">Inventory</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />

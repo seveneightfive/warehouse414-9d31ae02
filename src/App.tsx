@@ -16,6 +16,10 @@ import AdminProducts from "./pages/admin/AdminProducts";
 import AdminHolds from "./pages/admin/AdminHolds";
 import AdminOffers from "./pages/admin/AdminOffers";
 import AdminInquiries from "./pages/admin/AdminInquiries";
+import AdminDesigners from "./pages/admin/AdminDesigners";
+import AdminMakers from "./pages/admin/AdminMakers";
+import AdminCategories from "./pages/admin/AdminCategories";
+import AdminStyles from "./pages/admin/AdminStyles";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +42,10 @@ const App = () => (
             <Route path="/admin/holds" element={<AdminHolds />} />
             <Route path="/admin/offers" element={<AdminOffers />} />
             <Route path="/admin/inquiries" element={<AdminInquiries />} />
+            <Route path="/admin/designers" element={<AdminDesigners />} />
+            <Route path="/admin/makers" element={<AdminMakers />} />
+            <Route path="/admin/categories" element={<AdminCategories />} />
+            <Route path="/admin/styles" element={<AdminStyles />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

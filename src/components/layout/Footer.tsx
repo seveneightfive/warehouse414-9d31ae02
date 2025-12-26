@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import warehouseLogo from "@/assets/warehouse414-logo.jpg";
 
 const Footer = () => {
   return (
@@ -10,14 +11,15 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="md:col-span-2">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-primary-foreground stripe-pattern-thick" style={{ filter: "invert(1)" }} />
-              <span className="font-display text-2xl tracking-wider">WAREHOUSE414</span>
+            <div className="flex items-start gap-6 mb-4">
+              <Link to="/">
+                <img src={warehouseLogo} alt="Warehouse 414" className="w-24 md:w-32 h-auto" />
+              </Link>
+              <p className="font-body text-sm text-primary-foreground/70 max-w-sm text-left">
+                Curating exceptional vintage furniture and art pieces. Each item is unique, carefully selected for its
+                design significance and quality craftsmanship.
+              </p>
             </div>
-            <p className="font-body text-sm text-primary-foreground/70 max-w-md">
-              Curating exceptional vintage furniture and art pieces. Each item is unique, carefully selected for its
-              design significance and quality craftsmanship.
-            </p>
           </div>
 
           {/* Navigation */}

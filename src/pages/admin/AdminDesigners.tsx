@@ -20,7 +20,7 @@ import {
 import { Plus, MoreHorizontal, Pencil, Trash2, Search } from 'lucide-react';
 import { AttributeFormDialog } from '@/components/admin/AttributeFormDialog';
 import { DeleteConfirmDialog } from '@/components/admin/DeleteConfirmDialog';
-import { format } from 'date-fns';
+
 
 export default function AdminDesigners() {
   const { data: designers, isLoading, create, update, remove } = useAdminDesigners();
@@ -81,35 +81,31 @@ export default function AdminDesigners() {
             <TableHeader>
               <TableRow className="border-foreground">
                 <TableHead>Name</TableHead>
-                <TableHead>Slug</TableHead>
+                <TableHead className="text-center"># Products</TableHead>
                 <TableHead>About</TableHead>
-                <TableHead>Created</TableHead>
                 <TableHead className="w-16"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
                     Loading...
                   </TableCell>
                 </TableRow>
               ) : filtered.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
                     No designers found
                   </TableCell>
                 </TableRow>
               ) : (
-                filtered.map((designer) => (
+                filtered.map((designer: { id: string; name: string; slug: string; about?: string | null; created_at: string; productCount: number }) => (
                   <TableRow key={designer.id} className="border-foreground">
                     <TableCell className="font-medium">{designer.name}</TableCell>
-                    <TableCell className="text-muted-foreground">{designer.slug}</TableCell>
+                    <TableCell className="text-center text-muted-foreground">{designer.productCount}</TableCell>
                     <TableCell className="text-muted-foreground max-w-[200px] truncate">
                       {designer.about || '—'}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {format(new Date(designer.created_at), 'MMM d, yyyy')}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>

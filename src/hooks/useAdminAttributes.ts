@@ -75,11 +75,110 @@ export function useAdminSubcategories() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-subcategories'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-categories-with-counts'] });
       toast.success('Subcategory created');
     },
   });
 
-  return { data: query.data || [], isLoading: query.isLoading, create };
+  const update = useMutation({
+    mutationFn: async ({ id, name, slug, category_id }: { id: string; name: string; slug: string; category_id?: string }) => {
+      const { error } = await supabase.from('subcategories').update({ name, slug, category_id }).eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-subcategories'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-categories-with-counts'] });
+      toast.success('Subcategory updated');
+    },
+  });
+
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('subcategories').delete().eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-subcategories'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-categories-with-counts'] });
+      toast.success('Subcategory deleted');
+    },
+  });
+
+  return { data: query.data || [], isLoading: query.isLoading, create, update, remove };
+}
+
+export function useAdminCategoriesWithCounts() {
+  const queryClient = useQueryClient();
+
+  const query = useQuery({
+    queryKey: ['admin-categories-with-counts'],
+    queryFn: async () => {
+      // Fetch categories with subcategories
+      const { data: categories, error: catError } = await supabase
+        .from('categories')
+        .select('*, subcategories(*)')
+        .order('name');
+      if (catError) throw catError;
+
+      // Fetch product counts per category
+      const { data: productCounts, error: prodError } = await supabase
+        .from('products')
+        .select('category_id');
+      if (prodError) throw prodError;
+
+      // Count products per category
+      const countMap: Record<string, number> = {};
+      productCounts?.forEach((p) => {
+        if (p.category_id) {
+          countMap[p.category_id] = (countMap[p.category_id] || 0) + 1;
+        }
+      });
+
+      return categories.map((cat) => ({
+        ...cat,
+        productCount: countMap[cat.id] || 0,
+        subcategoryCount: cat.subcategories?.length || 0,
+      }));
+    },
+  });
+
+  const create = useMutation({
+    mutationFn: async ({ name, slug }: { name: string; slug: string }) => {
+      const { error } = await supabase.from('categories').insert({ name, slug });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-categories-with-counts'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
+      toast.success('Category created');
+    },
+  });
+
+  const update = useMutation({
+    mutationFn: async ({ id, name, slug }: { id: string; name: string; slug: string }) => {
+      const { error } = await supabase.from('categories').update({ name, slug }).eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-categories-with-counts'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
+      toast.success('Category updated');
+    },
+  });
+
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('categories').delete().eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-categories-with-counts'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
+      toast.success('Category deleted');
+    },
+  });
+
+  return { data: query.data || [], isLoading: query.isLoading, create, update, remove };
 }
 
 export function useAdminDesigners() {

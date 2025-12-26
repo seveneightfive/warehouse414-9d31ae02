@@ -13,15 +13,15 @@ const Header = () => {
       {/* Black bar with top logo */}
       <div className="bg-foreground flex items-center justify-start">
         <Link to="/" className="block">
-          <img src={logoTop} alt="Warehouse" className="h-10 md:h-14 w-auto" />
+          <img src={logoTop} alt="Warehouse" className="h-8 md:h-12 w-auto" />
         </Link>
       </div>
       
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-10 md:h-12">
-          {/* Bottom logo */}
+        <div className="flex items-center justify-between h-12 md:h-16">
+          {/* Bottom logo - same width as top so 414 appears larger */}
           <Link to="/" className="block -mt-1">
-            <img src={logoBottom} alt="414" className="h-6 md:h-8 w-auto" />
+            <img src={logoBottom} alt="414" className="h-8 md:h-12 w-auto" />
           </Link>
 
           {/* Desktop Navigation */}

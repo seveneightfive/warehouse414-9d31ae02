@@ -537,6 +537,41 @@ export type Database = {
         }
         Relationships: []
       }
+      spec_sheet_downloads: {
+        Row: {
+          created_at: string
+          customer_email: string
+          customer_name: string
+          id: string
+          include_price: boolean
+          product_id: string
+        }
+        Insert: {
+          created_at?: string
+          customer_email: string
+          customer_name: string
+          id?: string
+          include_price?: boolean
+          product_id: string
+        }
+        Update: {
+          created_at?: string
+          customer_email?: string
+          customer_name?: string
+          id?: string
+          include_price?: boolean
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spec_sheet_downloads_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       styles: {
         Row: {
           created_at: string

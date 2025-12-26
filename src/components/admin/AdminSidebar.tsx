@@ -28,6 +28,7 @@ import {
   Calendar,
   Globe,
   Archive,
+  FileText,
 } from 'lucide-react';
 
 const menuItems = [
@@ -37,6 +38,7 @@ const menuItems = [
   { title: 'Holds', url: '/admin/holds', icon: Clock },
   { title: 'Offers', url: '/admin/offers', icon: DollarSign },
   { title: 'Inquiries', url: '/admin/inquiries', icon: ShoppingCart },
+  { title: 'Spec Sheets', url: '/admin/spec-sheets', icon: FileText },
 ];
 
 const attributeItems = [

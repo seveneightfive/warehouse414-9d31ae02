@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Download } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ProductData {
   id: string;
@@ -74,13 +75,29 @@ const SpecSheetDialog = ({ open, onOpenChange, product }: SpecSheetDialogProps) 
     return dimStr;
   };
 
-  const generateSpecSheet = () => {
+  const generateSpecSheet = async () => {
     if (!name.trim() || !email.trim()) {
       toast.error("Please enter your name and email");
       return;
     }
 
     setIsGenerating(true);
+
+    // Save download request to database
+    try {
+      const { error } = await supabase.from("spec_sheet_downloads").insert({
+        product_id: product.id,
+        customer_name: name.trim(),
+        customer_email: email.trim(),
+        include_price: includePrice,
+      });
+
+      if (error) {
+        console.error("Error saving spec sheet download:", error);
+      }
+    } catch (err) {
+      console.error("Error saving spec sheet download:", err);
+    }
 
     const productDimensions = formatDimensions(product.product_width, product.product_height, product.product_depth, product.product_weight);
     const boxDimensions = formatDimensions(product.box_width, product.box_height, product.box_depth, product.box_weight);

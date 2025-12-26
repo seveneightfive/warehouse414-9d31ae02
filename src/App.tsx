@@ -24,6 +24,7 @@ import AdminStyles from "./pages/admin/AdminStyles";
 import AdminPeriods from "./pages/admin/AdminPeriods";
 import AdminCountries from "./pages/admin/AdminCountries";
 import AdminInventory from "./pages/admin/AdminInventory";
+import AdminSpecSheets from "./pages/admin/AdminSpecSheets";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ const App = () => (
             <Route path="/admin/styles" element={<AdminStyles />} />
             <Route path="/admin/periods" element={<AdminPeriods />} />
             <Route path="/admin/countries" element={<AdminCountries />} />
+            <Route path="/admin/spec-sheets" element={<AdminSpecSheets />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

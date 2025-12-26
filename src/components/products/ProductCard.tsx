@@ -45,18 +45,18 @@ const ProductCard = ({ product }: ProductCardProps) => {
         {/* Cross-listing badges */}
         <div className="absolute bottom-3 right-3 flex gap-2">
           {product.firstdibs_url && (
-            <div className="bg-background px-2 py-1 flex items-center justify-center text-[8px] font-bold">
-              1stDibs
+            <div className="w-6 h-6 bg-background rounded-full flex items-center justify-center text-[8px] font-bold">
+              1D
             </div>
           )}
           {product.chairish_url && (
-            <div className="bg-background px-2 py-1 flex items-center justify-center text-[8px] font-bold">
-              Chairish
+            <div className="w-6 h-6 bg-background rounded-full flex items-center justify-center text-[8px] font-bold">
+              CH
             </div>
           )}
           {product.ebay_url && (
-            <div className="bg-background px-2 py-1 flex items-center justify-center text-[8px] font-bold">
-              eBay
+            <div className="w-6 h-6 bg-background rounded-full flex items-center justify-center text-[8px] font-bold">
+              EB
             </div>
           )}
         </div>

@@ -130,6 +130,7 @@ const ProductDetail = () => {
                 <Link to={`/designer/${product.designer.slug}`}>
                   <Badge variant="outline" className="font-body hover:bg-secondary cursor-pointer">
                     {product.designer.name}
+                    {product.designer_attribution && ` (${product.designer_attribution})`}
                   </Badge>
                 </Link>
               )}
@@ -137,6 +138,7 @@ const ProductDetail = () => {
                 <Link to={`/catalog?maker=${product.maker.slug}`}>
                   <Badge variant="outline" className="font-body hover:bg-secondary cursor-pointer">
                     {product.maker.name}
+                    {product.maker_attribution && ` (${product.maker_attribution})`}
                   </Badge>
                 </Link>
               )}

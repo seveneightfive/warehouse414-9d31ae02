@@ -50,6 +50,14 @@ export interface Period {
   created_at: string;
 }
 
+export interface Country {
+  id: string;
+  name: string;
+  slug: string;
+  code: string | null;
+  created_at: string;
+}
+
 export type ProductStatus = 'available' | 'on_hold' | 'sold';
 
 export interface Product {
@@ -83,6 +91,7 @@ export interface Product {
   style_id: string | null;
   period_id: string | null;
   period_attribution: string | null;
+  country_id: string | null;
   firstdibs_url: string | null;
   chairish_url: string | null;
   ebay_url: string | null;
@@ -97,6 +106,7 @@ export interface ProductWithRelations extends Product {
   subcategory: Subcategory | null;
   style: Style | null;
   period: Period | null;
+  country: Country | null;
   product_colors: Array<{ color: Color }>;
   product_images: ProductImage[];
 }
@@ -159,6 +169,7 @@ export interface FilterState {
   subcategory?: string;
   style?: string;
   period?: string;
+  country?: string;
   yearFrom?: number;
   yearTo?: number;
   search?: string;

@@ -22,6 +22,7 @@ import AdminMakers from "./pages/admin/AdminMakers";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminStyles from "./pages/admin/AdminStyles";
 import AdminPeriods from "./pages/admin/AdminPeriods";
+import AdminCountries from "./pages/admin/AdminCountries";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="/admin/categories" element={<AdminCategories />} />
             <Route path="/admin/styles" element={<AdminStyles />} />
             <Route path="/admin/periods" element={<AdminPeriods />} />
+            <Route path="/admin/countries" element={<AdminCountries />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

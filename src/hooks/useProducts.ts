@@ -16,6 +16,7 @@ export const useProducts = (filters: FilterState = {}) => {
           subcategory:subcategories(*),
           style:styles(*),
           period:periods(*),
+          country:countries(*),
           product_colors(color:colors(*)),
           product_images(*)
         `)
@@ -78,6 +79,17 @@ export const useProducts = (filters: FilterState = {}) => {
           .single();
         if (periodData) {
           query = query.eq('period_id', periodData.id);
+        }
+      }
+
+      if (filters.country) {
+        const { data: countryData } = await supabase
+          .from('countries')
+          .select('id')
+          .eq('slug', filters.country)
+          .single();
+        if (countryData) {
+          query = query.eq('country_id', countryData.id);
         }
       }
 
@@ -149,6 +161,7 @@ export const useProduct = (slug: string) => {
           subcategory:subcategories(*),
           style:styles(*),
           period:periods(*),
+          country:countries(*),
           product_colors(color:colors(*)),
           product_images(*)
         `)
@@ -176,6 +189,7 @@ export const useFeaturedProducts = (limit: number = 8) => {
           subcategory:subcategories(*),
           style:styles(*),
           period:periods(*),
+          country:countries(*),
           product_colors(color:colors(*)),
           product_images(*)
         `)

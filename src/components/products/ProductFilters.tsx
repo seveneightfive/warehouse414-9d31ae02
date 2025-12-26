@@ -72,6 +72,15 @@ const ProductFilters = ({ filters, onFiltersChange }: ProductFiltersProps) => {
     },
   });
 
+  const { data: countries } = useQuery({
+    queryKey: ['countries'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('countries').select('*').order('name');
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const updateFilter = (key: keyof FilterState, value: string | undefined) => {
     onFiltersChange({
       ...filters,
@@ -180,6 +189,23 @@ const ProductFilters = ({ filters, onFiltersChange }: ProductFiltersProps) => {
             {periods?.map((period) => (
               <SelectItem key={period.id} value={period.slug}>
                 {period.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={filters.country || 'all'}
+          onValueChange={(value) => updateFilter('country', value)}
+        >
+          <SelectTrigger className="font-body">
+            <SelectValue placeholder="Country" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Countries</SelectItem>
+            {countries?.map((country) => (
+              <SelectItem key={country.id} value={country.slug}>
+                {country.name}
               </SelectItem>
             ))}
           </SelectContent>

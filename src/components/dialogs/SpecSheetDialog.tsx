@@ -132,11 +132,14 @@ const SpecSheetDialog = ({ open, onOpenChange, product }: SpecSheetDialogProps) 
 
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
-    const margin = 20;
+    const margin = 12.7; // 0.5 inches
     const contentWidth = pageWidth - margin * 2;
     let y = margin;
 
-    // Load and add logo
+    // Header: Logo on left, product name on right
+    const headerHeight = 18;
+    
+    // Add logo (smaller, left-aligned)
     try {
       const logoImg = new Image();
       logoImg.src = warehouseLogo;
@@ -144,41 +147,49 @@ const SpecSheetDialog = ({ open, onOpenChange, product }: SpecSheetDialogProps) 
         logoImg.onload = resolve;
       });
       
-      const logoWidth = 50;
+      const logoWidth = 30;
       const logoHeight = (logoImg.height / logoImg.width) * logoWidth;
-      const logoX = (pageWidth - logoWidth) / 2;
-      pdf.addImage(warehouseLogo, "JPEG", logoX, y, logoWidth, logoHeight);
-      y += logoHeight + 5;
+      pdf.addImage(warehouseLogo, "JPEG", margin, y, logoWidth, Math.min(logoHeight, headerHeight));
+      
+      // Product name to the right of logo
+      const textX = margin + logoWidth + 8;
+      const textWidth = contentWidth - logoWidth - 8;
+      pdf.setFontSize(14);
+      pdf.setFont("helvetica", "bold");
+      const nameLines = pdf.splitTextToSize(product.name, textWidth);
+      pdf.text(nameLines, textX, y + 6);
+      
+      // Phone number below product name
+      pdf.setFontSize(8);
+      pdf.setFont("helvetica", "normal");
+      pdf.text(PHONE_NUMBER, textX, y + 6 + (nameLines.length * 5) + 2);
+      
+      y += Math.max(headerHeight, logoHeight) + 3;
     } catch (err) {
       console.error("Error loading logo:", err);
-      // Fallback to text
-      pdf.setFontSize(18);
+      pdf.setFontSize(14);
       pdf.setFont("helvetica", "bold");
-      pdf.text("WAREHOUSE 414", pageWidth / 2, y + 10, { align: "center" });
-      y += 15;
+      pdf.text(product.name, margin, y + 8);
+      pdf.setFontSize(8);
+      pdf.setFont("helvetica", "normal");
+      pdf.text(`WAREHOUSE 414 • ${PHONE_NUMBER}`, margin, y + 14);
+      y += headerHeight + 3;
     }
-
-    // Phone number
-    pdf.setFontSize(10);
-    pdf.setFont("helvetica", "normal");
-    pdf.text(PHONE_NUMBER, pageWidth / 2, y, { align: "center" });
-    y += 8;
 
     // Separator line
     pdf.setDrawColor(0);
-    pdf.setLineWidth(0.5);
+    pdf.setLineWidth(0.3);
     pdf.line(margin, y, pageWidth - margin, y);
-    y += 10;
+    y += 6;
 
     // Product image
     if (product.featured_image_url) {
       try {
         const imgData = await loadImageAsBase64(product.featured_image_url);
         if (imgData) {
-          const maxImgHeight = 80;
-          const maxImgWidth = contentWidth;
+          const maxImgHeight = 65;
+          const maxImgWidth = contentWidth * 0.8;
           
-          // Calculate aspect ratio
           const img = new Image();
           img.src = product.featured_image_url;
           await new Promise((resolve) => { img.onload = resolve; });
@@ -193,78 +204,71 @@ const SpecSheetDialog = ({ open, onOpenChange, product }: SpecSheetDialogProps) 
           
           const imgX = (pageWidth - imgWidth) / 2;
           pdf.addImage(imgData, "JPEG", imgX, y, imgWidth, imgHeight);
-          y += imgHeight + 10;
+          y += imgHeight + 6;
         }
       } catch (err) {
         console.error("Error loading product image:", err);
       }
     }
 
-    // Product name
-    pdf.setFontSize(20);
-    pdf.setFont("helvetica", "bold");
-    const nameLines = pdf.splitTextToSize(product.name, contentWidth);
-    pdf.text(nameLines, pageWidth / 2, y, { align: "center" });
-    y += nameLines.length * 8 + 5;
-
     // Price (if included)
     if (includePrice) {
-      pdf.setFontSize(16);
-      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(12);
+      pdf.setFont("helvetica", "bold");
       pdf.text(formatPrice(product.price), pageWidth / 2, y, { align: "center" });
-      y += 8;
+      y += 5;
     }
 
     // SKU
     if (product.sku) {
-      pdf.setFontSize(10);
+      pdf.setFontSize(8);
       pdf.setTextColor(100);
       pdf.text(`SKU: ${product.sku}`, pageWidth / 2, y, { align: "center" });
       pdf.setTextColor(0);
-      y += 8;
+      y += 5;
     }
 
-    y += 5;
+    y += 3;
 
     // Short description
     if (product.short_description) {
-      pdf.setFontSize(11);
+      pdf.setFontSize(9);
       pdf.setFont("helvetica", "italic");
       const descLines = pdf.splitTextToSize(product.short_description, contentWidth);
       pdf.text(descLines, margin, y);
-      y += descLines.length * 5 + 8;
+      y += descLines.length * 3.5 + 4;
     }
 
-    // Details section
+    // Details section helper
     const addSection = (title: string) => {
-      if (y > pageHeight - 40) {
+      if (y > pageHeight - 25) {
         pdf.addPage();
         y = margin;
       }
-      pdf.setFontSize(10);
+      pdf.setFontSize(8);
       pdf.setFont("helvetica", "bold");
       pdf.setTextColor(80);
       pdf.text(title.toUpperCase(), margin, y);
-      pdf.setLineWidth(0.2);
-      pdf.line(margin, y + 2, pageWidth - margin, y + 2);
+      pdf.setLineWidth(0.15);
+      pdf.line(margin, y + 1.5, pageWidth - margin, y + 1.5);
       pdf.setTextColor(0);
-      y += 8;
+      y += 5;
     };
 
     const addAttribute = (label: string, value: string | null | undefined) => {
       if (!value) return;
-      if (y > pageHeight - 20) {
+      if (y > pageHeight - 15) {
         pdf.addPage();
         y = margin;
       }
-      pdf.setFontSize(10);
+      pdf.setFontSize(9);
       pdf.setFont("helvetica", "bold");
       pdf.text(`${label}: `, margin, y);
       pdf.setFont("helvetica", "normal");
       const labelWidth = pdf.getTextWidth(`${label}: `);
       const valueLines = pdf.splitTextToSize(value, contentWidth - labelWidth);
       pdf.text(valueLines, margin + labelWidth, y);
-      y += valueLines.length * 5 + 2;
+      y += valueLines.length * 3.5 + 1.5;
     };
 
     // Build attributes array
@@ -282,7 +286,7 @@ const SpecSheetDialog = ({ open, onOpenChange, product }: SpecSheetDialogProps) 
     if (details.length > 0) {
       addSection("Details");
       details.forEach(d => addAttribute(d.label, d.value));
-      y += 5;
+      y += 3;
     }
 
     // Dimensions section
@@ -292,36 +296,18 @@ const SpecSheetDialog = ({ open, onOpenChange, product }: SpecSheetDialogProps) 
         addAttribute("Product", productDimensions);
       }
       if (product.dimension_notes) {
-        pdf.setFontSize(9);
+        pdf.setFontSize(8);
         pdf.setFont("helvetica", "italic");
         pdf.setTextColor(100);
         const noteLines = pdf.splitTextToSize(product.dimension_notes, contentWidth);
         pdf.text(noteLines, margin, y);
         pdf.setTextColor(0);
-        y += noteLines.length * 4 + 3;
+        y += noteLines.length * 3 + 2;
       }
       if (boxDimensions) {
         addAttribute("Shipping Box", boxDimensions);
       }
-      y += 5;
-    }
-
-    // Long description
-    if (product.long_description) {
-      addSection("About This Piece");
-      pdf.setFontSize(10);
-      pdf.setFont("helvetica", "normal");
-      const longDescLines = pdf.splitTextToSize(product.long_description, contentWidth);
-      
-      for (const line of longDescLines) {
-        if (y > pageHeight - 20) {
-          pdf.addPage();
-          y = margin;
-        }
-        pdf.text(line, margin, y);
-        y += 5;
-      }
-      y += 5;
+      y += 3;
     }
 
     // Footer

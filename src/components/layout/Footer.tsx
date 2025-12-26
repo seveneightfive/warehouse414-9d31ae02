@@ -40,10 +40,21 @@ const Footer = () => {
           <div>
             <h4 className="font-display text-lg mb-4 tracking-wider">CONTACT</h4>
             <div className="flex flex-col gap-2 font-body text-sm text-primary-foreground/70">
-              <a href="mailto:hello@warehouse414.com" className="hover:text-primary-foreground transition-colors">
-                hello@warehouse414.com
+              <a href="mailto:chris@warehouse414.com" className="hover:text-primary-foreground transition-colors">
+                chris@warehouse414.com
               </a>
-            </div>
+              <a href="tel:17852328008" className="hover:text-primary-foreground transition-colors">
+                785.232.8008
+              </a>
+              <a href="https://maps.google.com/?q=414+SE+Second+St,+Topeka,+Kansas"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="hover:text-primary-foreground transition-colors"
+    >
+      414 se second street<br />
+      topeka, kansas<br />
+                by appointment only
+    </a>
           </div>
         </div>
 

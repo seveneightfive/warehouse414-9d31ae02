@@ -110,8 +110,12 @@ serve(async (req) => {
 
       console.log(`Successfully uploaded ${filename} to Bunny.net`);
 
-      // Construct CDN URL
-      const cdnUrl = `${BUNNY_CDN_URL}/${storagePath}`;
+      // Construct CDN URL - ensure protocol is included
+      let cdnBaseUrl = BUNNY_CDN_URL;
+      if (!cdnBaseUrl.startsWith('http://') && !cdnBaseUrl.startsWith('https://')) {
+        cdnBaseUrl = `https://${cdnBaseUrl}`;
+      }
+      const cdnUrl = `${cdnBaseUrl}/${storagePath}`;
 
       // Insert into product_images table
       const sortOrder = startSortOrder + i;

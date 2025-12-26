@@ -2,23 +2,26 @@ import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import logoTop from "@/assets/logo-top.png";
+import logoBottom from "@/assets/logo-bottom.png";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 bg-background border-b border-border">
-      {/* Stripe accent bar */}
-      <div className="h-2 stripe-pattern" />
+      {/* Black bar with top logo */}
+      <div className="bg-foreground flex items-center justify-start">
+        <Link to="/" className="block">
+          <img src={logoTop} alt="Warehouse" className="h-10 md:h-14 w-auto" />
+        </Link>
+      </div>
       
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 stripe-pattern-thick" />
-            <span className="font-display text-2xl md:text-3xl tracking-wider">
-              WAREHOUSE414
-            </span>
+        <div className="flex items-center justify-between h-10 md:h-12">
+          {/* Bottom logo */}
+          <Link to="/" className="block -mt-1">
+            <img src={logoBottom} alt="414" className="h-6 md:h-8 w-auto" />
           </Link>
 
           {/* Desktop Navigation */}

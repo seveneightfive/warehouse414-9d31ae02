@@ -71,15 +71,9 @@ export interface Product {
   long_description: string | null;
   price: number | null;
   year_created: string | null;
-  product_width: number | null;
-  product_height: number | null;
-  product_depth: number | null;
-  product_weight: number | null;
+  product_dimensions: string | null;
+  box_dimensions: string | null;
   dimension_notes: string | null;
-  box_width: number | null;
-  box_height: number | null;
-  box_depth: number | null;
-  box_weight: number | null;
   featured_image_url: string | null;
   status: ProductStatus;
   designer_id: string | null;

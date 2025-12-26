@@ -9,14 +9,16 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 interface AttributeFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
-  attribute?: { id: string; name: string; slug: string } | null;
-  onSave: (data: { name: string; slug: string }) => void;
+  attribute?: { id: string; name: string; slug: string; about?: string | null } | null;
+  onSave: (data: { name: string; slug: string; about?: string }) => void;
   isPending?: boolean;
+  showAbout?: boolean;
 }
 
 function generateSlug(name: string): string {
@@ -35,9 +37,11 @@ export function AttributeFormDialog({
   attribute,
   onSave,
   isPending,
+  showAbout,
 }: AttributeFormDialogProps) {
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
+  const [about, setAbout] = useState('');
   const [slugTouched, setSlugTouched] = useState(false);
 
   useEffect(() => {
@@ -45,10 +49,12 @@ export function AttributeFormDialog({
       if (attribute) {
         setName(attribute.name);
         setSlug(attribute.slug);
+        setAbout(attribute.about || '');
         setSlugTouched(true);
       } else {
         setName('');
         setSlug('');
+        setAbout('');
         setSlugTouched(false);
       }
     }
@@ -63,7 +69,7 @@ export function AttributeFormDialog({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !slug.trim()) return;
-    onSave({ name: name.trim(), slug: slug.trim() });
+    onSave({ name: name.trim(), slug: slug.trim(), about: about.trim() || undefined });
   };
 
   return (
@@ -96,6 +102,18 @@ export function AttributeFormDialog({
               required
             />
           </div>
+          {showAbout && (
+            <div className="space-y-2">
+              <Label htmlFor="about">About (optional)</Label>
+              <Textarea
+                id="about"
+                value={about}
+                onChange={(e) => setAbout(e.target.value)}
+                placeholder="Biographical information about this designer..."
+                rows={4}
+              />
+            </div>
+          )}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel

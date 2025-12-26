@@ -61,18 +61,21 @@ export type Database = {
       }
       designers: {
         Row: {
+          about: string | null
           created_at: string
           id: string
           name: string
           slug: string
         }
         Insert: {
+          about?: string | null
           created_at?: string
           id?: string
           name: string
           slug: string
         }
         Update: {
+          about?: string | null
           created_at?: string
           id?: string
           name?: string

@@ -98,8 +98,8 @@ export function useAdminDesigners() {
   });
 
   const create = useMutation({
-    mutationFn: async ({ name, slug }: { name: string; slug: string }) => {
-      const { error } = await supabase.from('designers').insert({ name, slug });
+    mutationFn: async ({ name, slug, about }: { name: string; slug: string; about?: string }) => {
+      const { error } = await supabase.from('designers').insert({ name, slug, about });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -109,8 +109,8 @@ export function useAdminDesigners() {
   });
 
   const update = useMutation({
-    mutationFn: async ({ id, name, slug }: { id: string; name: string; slug: string }) => {
-      const { error } = await supabase.from('designers').update({ name, slug }).eq('id', id);
+    mutationFn: async ({ id, name, slug, about }: { id: string; name: string; slug: string; about?: string }) => {
+      const { error } = await supabase.from('designers').update({ name, slug, about }).eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {

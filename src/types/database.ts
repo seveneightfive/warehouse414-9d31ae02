@@ -2,6 +2,7 @@ export interface Designer {
   id: string;
   name: string;
   slug: string;
+  about: string | null;
   created_at: string;
 }
 

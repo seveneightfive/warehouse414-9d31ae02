@@ -23,12 +23,32 @@ import { Link } from 'react-router-dom';
 import { ProductFormDialog } from '@/components/admin/ProductFormDialog';
 import { DeleteConfirmDialog } from '@/components/admin/DeleteConfirmDialog';
 
+// Custom crosslisting icons as SVG components
+const FirstDibsIcon = ({ active }: { active: boolean }) => (
+  <svg viewBox="0 0 24 24" className={`h-4 w-4 ${active ? 'text-foreground' : 'text-muted-foreground/40'}`} fill="currentColor">
+    <text x="2" y="18" fontSize="14" fontWeight="bold" fontFamily="serif">1D</text>
+  </svg>
+);
+
+const ChairishIcon = ({ active }: { active: boolean }) => (
+  <svg viewBox="0 0 24 24" className={`h-4 w-4 ${active ? 'text-foreground' : 'text-muted-foreground/40'}`} fill="currentColor">
+    <text x="4" y="18" fontSize="14" fontWeight="bold" fontFamily="serif">C</text>
+  </svg>
+);
+
+const EbayIcon = ({ active }: { active: boolean }) => (
+  <svg viewBox="0 0 24 24" className={`h-4 w-4 ${active ? 'text-foreground' : 'text-muted-foreground/40'}`} fill="currentColor">
+    <text x="4" y="18" fontSize="14" fontWeight="bold" fontFamily="sans-serif">e</text>
+  </svg>
+);
+
 export default function AdminProducts() {
   const { products, isLoading, deleteProduct } = useAdminProducts();
   const [search, setSearch] = useState('');
   const [formOpen, setFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [initialTab, setInitialTab] = useState('basic');
 
   const filteredProducts = products.filter(
     (p) =>
@@ -51,6 +71,12 @@ export default function AdminProducts() {
     }
   };
 
+  const handleOpenForm = (product: any = null, tab: string = 'basic') => {
+    setEditingProduct(product);
+    setInitialTab(tab);
+    setFormOpen(true);
+  };
+
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -59,7 +85,7 @@ export default function AdminProducts() {
             <h1 className="font-display text-4xl">Products</h1>
             <p className="text-muted-foreground">Manage your inventory</p>
           </div>
-          <Button onClick={() => { setEditingProduct(null); setFormOpen(true); }}>
+          <Button onClick={() => handleOpenForm()}>
             <Plus className="mr-2 h-4 w-4" />
             Add Product
           </Button>
@@ -83,9 +109,9 @@ export default function AdminProducts() {
               <TableRow className="border-foreground">
                 <TableHead className="w-16">Image</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Designer</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead className="text-right">Price</TableHead>
+                <TableHead className="text-center">Crosslisted</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="w-16"></TableHead>
               </TableRow>
@@ -123,10 +149,21 @@ export default function AdminProducts() {
                       <div className="font-medium">{product.name}</div>
                       <div className="text-xs text-muted-foreground">{product.slug}</div>
                     </TableCell>
-                    <TableCell>{product.designer?.name || '—'}</TableCell>
                     <TableCell>{product.category?.name || '—'}</TableCell>
                     <TableCell className="text-right">
                       {product.price ? `$${product.price.toLocaleString()}` : '—'}
+                    </TableCell>
+                    <TableCell>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenForm(product, 'links')}
+                        className="flex items-center justify-center gap-1.5 w-full hover:bg-muted/50 rounded p-1 transition-colors"
+                        title="Edit crosslisting links"
+                      >
+                        <FirstDibsIcon active={!!product.firstdibs_url} />
+                        <ChairishIcon active={!!product.chairish_url} />
+                        <EbayIcon active={!!product.ebay_url} />
+                      </button>
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className={getStatusColor(product.status)}>
@@ -149,7 +186,7 @@ export default function AdminProducts() {
                             </Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            onClick={() => { setEditingProduct(product); setFormOpen(true); }}
+                            onClick={() => handleOpenForm(product)}
                           >
                             <Pencil className="mr-2 h-4 w-4" />
                             Edit
@@ -176,6 +213,7 @@ export default function AdminProducts() {
         open={formOpen}
         onOpenChange={setFormOpen}
         product={editingProduct}
+        initialTab={initialTab}
       />
 
       <DeleteConfirmDialog

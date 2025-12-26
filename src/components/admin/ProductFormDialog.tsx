@@ -73,9 +73,10 @@ interface ProductFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   product?: any;
+  initialTab?: string;
 }
 
-export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDialogProps) {
+export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'basic' }: ProductFormDialogProps) {
   const { createProduct, updateProduct } = useAdminProducts();
   const { data: categories } = useAdminCategories();
   const { data: subcategories } = useAdminSubcategories();
@@ -227,7 +228,7 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <Tabs defaultValue="basic" className="w-full">
+            <Tabs defaultValue={initialTab} className="w-full">
               <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="basic">Basic</TabsTrigger>
                 <TabsTrigger value="attributes">Attributes</TabsTrigger>

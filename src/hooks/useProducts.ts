@@ -22,7 +22,7 @@ export const useProducts = (filters: FilterState = {}) => {
 
       // Apply filters
       if (filters.search) {
-        query = query.or(`name.ilike.%${filters.search}%,short_description.ilike.%${filters.search}%`);
+        query = query.or(`name.ilike.%${filters.search}%,short_description.ilike.%${filters.search}%,sku.ilike.%${filters.search}%`);
       }
 
       if (filters.designer) {
@@ -96,6 +96,26 @@ export const useProducts = (filters: FilterState = {}) => {
             product.product_colors?.some(pc => pc.color?.id === colorData.id)
           );
         }
+      }
+
+      // Filter by tags if search term matches any tag (post-processing)
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
+        filteredData = filteredData.filter(product => {
+          // Already matched by name/description/sku in the query, or matches a tag
+          const matchesTags = product.tags?.some(tag => 
+            tag.toLowerCase().includes(searchLower)
+          );
+          return true || matchesTags; // Keep all results from query, tags are additive
+        });
+        
+        // Also include products that match tags but weren't caught by the main query
+        const allProducts = data as ProductWithRelations[];
+        const tagMatches = allProducts.filter(product => 
+          product.tags?.some(tag => tag.toLowerCase().includes(searchLower)) &&
+          !filteredData.some(fp => fp.id === product.id)
+        );
+        filteredData = [...filteredData, ...tagMatches];
       }
 
       return filteredData;

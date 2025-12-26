@@ -5,6 +5,9 @@ import { toast } from 'sonner';
 export interface ProductFormData {
   name: string;
   slug: string;
+  sku?: string;
+  tags?: string[];
+  materials?: string;
   short_description?: string;
   long_description?: string;
   price?: number;
@@ -18,9 +21,12 @@ export interface ProductFormData {
   product_width?: number;
   product_height?: number;
   product_depth?: number;
+  product_weight?: number;
+  dimension_notes?: string;
   box_width?: number;
   box_height?: number;
   box_depth?: number;
+  box_weight?: number;
   featured_image_url?: string;
   firstdibs_url?: string;
   chairish_url?: string;

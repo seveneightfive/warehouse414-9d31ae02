@@ -33,7 +33,9 @@ import { Loader2, Upload, X } from 'lucide-react';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  slug: z.string().min(1, 'Slug is required'),
+  sku: z.string().optional(),
+  tags: z.string().optional(), // comma-separated
+  materials: z.string().optional(),
   short_description: z.string().optional(),
   long_description: z.string().optional(),
   price: z.coerce.number().optional(),
@@ -47,9 +49,12 @@ const formSchema = z.object({
   product_width: z.coerce.number().optional(),
   product_height: z.coerce.number().optional(),
   product_depth: z.coerce.number().optional(),
+  product_weight: z.coerce.number().optional(),
+  dimension_notes: z.string().optional(),
   box_width: z.coerce.number().optional(),
   box_height: z.coerce.number().optional(),
   box_depth: z.coerce.number().optional(),
+  box_weight: z.coerce.number().optional(),
   featured_image_url: z.string().optional(),
   firstdibs_url: z.string().optional(),
   chairish_url: z.string().optional(),
@@ -76,7 +81,7 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      slug: '',
+      sku: '',
       status: 'available',
     },
   });
@@ -85,7 +90,9 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
     if (product) {
       form.reset({
         name: product.name || '',
-        slug: product.slug || '',
+        sku: product.sku || '',
+        tags: product.tags?.join(', ') || '',
+        materials: product.materials || '',
         short_description: product.short_description || '',
         long_description: product.long_description || '',
         price: product.price || undefined,
@@ -99,9 +106,12 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
         product_width: product.product_width || undefined,
         product_height: product.product_height || undefined,
         product_depth: product.product_depth || undefined,
+        product_weight: product.product_weight || undefined,
+        dimension_notes: product.dimension_notes || '',
         box_width: product.box_width || undefined,
         box_height: product.box_height || undefined,
         box_depth: product.box_depth || undefined,
+        box_weight: product.box_weight || undefined,
         featured_image_url: product.featured_image_url || '',
         firstdibs_url: product.firstdibs_url || '',
         chairish_url: product.chairish_url || '',
@@ -110,7 +120,7 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
     } else {
       form.reset({
         name: '',
-        slug: '',
+        sku: '',
         status: 'available',
       });
     }
@@ -124,9 +134,20 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
   };
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    // Generate slug from SKU if available, otherwise from name
+    const slug = generateSlug(data.sku || data.name);
+    
+    // Parse tags from comma-separated string
+    const tags = data.tags 
+      ? data.tags.split(',').map(t => t.trim()).filter(t => t.length > 0)
+      : [];
+
     const formData: ProductFormData = {
       name: data.name,
-      slug: data.slug,
+      slug,
+      sku: data.sku,
+      tags,
+      materials: data.materials,
       status: data.status,
       short_description: data.short_description,
       long_description: data.long_description,
@@ -140,9 +161,12 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
       product_width: data.product_width,
       product_height: data.product_height,
       product_depth: data.product_depth,
+      product_weight: data.product_weight,
+      dimension_notes: data.dimension_notes,
       box_width: data.box_width,
       box_height: data.box_height,
       box_depth: data.box_depth,
+      box_weight: data.box_weight,
       featured_image_url: data.featured_image_url,
       firstdibs_url: data.firstdibs_url,
       chairish_url: data.chairish_url,
@@ -187,16 +211,7 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
                       <FormItem>
                         <FormLabel>Name *</FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            className="border-foreground"
-                            onChange={(e) => {
-                              field.onChange(e);
-                              if (!isEditing) {
-                                form.setValue('slug', generateSlug(e.target.value));
-                              }
-                            }}
-                          />
+                          <Input {...field} className="border-foreground" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -204,12 +219,12 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
                   />
                   <FormField
                     control={form.control}
-                    name="slug"
+                    name="sku"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Slug *</FormLabel>
+                        <FormLabel>SKU</FormLabel>
                         <FormControl>
-                          <Input {...field} className="border-foreground" />
+                          <Input {...field} className="border-foreground" placeholder="Product SKU (auto-generates slug)" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -299,6 +314,33 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
               </TabsContent>
 
               <TabsContent value="attributes" className="space-y-4 pt-4">
+                <FormField
+                  control={form.control}
+                  name="tags"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tags</FormLabel>
+                      <FormControl>
+                        <Input {...field} className="border-foreground" placeholder="vintage, mid-century, brass (comma-separated)" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="materials"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Materials</FormLabel>
+                      <FormControl>
+                        <Input {...field} className="border-foreground" placeholder="Wood, brass, leather, etc." />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
@@ -450,7 +492,7 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
               <TabsContent value="dimensions" className="space-y-4 pt-4">
                 <div>
                   <h3 className="font-medium mb-3">Product Dimensions (inches)</h3>
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-4 gap-4">
                     <FormField
                       control={form.control}
                       name="product_width"
@@ -490,12 +532,45 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
                         </FormItem>
                       )}
                     />
+                    <FormField
+                      control={form.control}
+                      name="product_weight"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Weight (lbs)</FormLabel>
+                          <FormControl>
+                            <Input type="number" step="0.1" {...field} className="border-foreground" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="mt-4">
+                    <FormField
+                      control={form.control}
+                      name="dimension_notes"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Dimension Notes</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              {...field} 
+                              rows={2} 
+                              className="border-foreground" 
+                              placeholder="e.g., Seat height: 18 inches. Dimensions are for one chair; set includes two."
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
                 </div>
 
                 <div>
                   <h3 className="font-medium mb-3">Box/Shipping Dimensions (inches)</h3>
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-4 gap-4">
                     <FormField
                       control={form.control}
                       name="box_width"
@@ -528,6 +603,19 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Depth</FormLabel>
+                          <FormControl>
+                            <Input type="number" step="0.1" {...field} className="border-foreground" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="box_weight"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Weight (lbs)</FormLabel>
                           <FormControl>
                             <Input type="number" step="0.1" {...field} className="border-foreground" />
                           </FormControl>

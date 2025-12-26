@@ -20,7 +20,7 @@ import {
 import { Plus, MoreHorizontal, Pencil, Trash2, Search } from 'lucide-react';
 import { AttributeFormDialog } from '@/components/admin/AttributeFormDialog';
 import { DeleteConfirmDialog } from '@/components/admin/DeleteConfirmDialog';
-import { format } from 'date-fns';
+
 
 export default function AdminMakers() {
   const { data: makers, isLoading, create, update, remove } = useAdminMakers();
@@ -78,32 +78,28 @@ export default function AdminMakers() {
             <TableHeader>
               <TableRow className="border-foreground">
                 <TableHead>Name</TableHead>
-                <TableHead>Slug</TableHead>
-                <TableHead>Created</TableHead>
+                <TableHead className="text-center"># Products</TableHead>
                 <TableHead className="w-16"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
                     Loading...
                   </TableCell>
                 </TableRow>
               ) : filtered.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
                     No makers found
                   </TableCell>
                 </TableRow>
               ) : (
-                filtered.map((maker) => (
+                filtered.map((maker: { id: string; name: string; slug: string; created_at: string; productCount: number }) => (
                   <TableRow key={maker.id} className="border-foreground">
                     <TableCell className="font-medium">{maker.name}</TableCell>
-                    <TableCell className="text-muted-foreground">{maker.slug}</TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {format(new Date(maker.created_at), 'MMM d, yyyy')}
-                    </TableCell>
+                    <TableCell className="text-center text-muted-foreground">{maker.productCount}</TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>

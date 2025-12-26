@@ -195,12 +195,29 @@ export function useAdminDesigners() {
   const query = useQuery({
     queryKey: ['admin-designers'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: designers, error } = await supabase
         .from('designers')
         .select('*')
         .order('name');
       if (error) throw error;
-      return data;
+
+      // Fetch product counts per designer
+      const { data: productCounts, error: prodError } = await supabase
+        .from('products')
+        .select('designer_id');
+      if (prodError) throw prodError;
+
+      const countMap: Record<string, number> = {};
+      productCounts?.forEach((p) => {
+        if (p.designer_id) {
+          countMap[p.designer_id] = (countMap[p.designer_id] || 0) + 1;
+        }
+      });
+
+      return designers.map((d) => ({
+        ...d,
+        productCount: countMap[d.id] || 0,
+      }));
     },
   });
 
@@ -246,12 +263,29 @@ export function useAdminMakers() {
   const query = useQuery({
     queryKey: ['admin-makers'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: makers, error } = await supabase
         .from('makers')
         .select('*')
         .order('name');
       if (error) throw error;
-      return data;
+
+      // Fetch product counts per maker
+      const { data: productCounts, error: prodError } = await supabase
+        .from('products')
+        .select('maker_id');
+      if (prodError) throw prodError;
+
+      const countMap: Record<string, number> = {};
+      productCounts?.forEach((p) => {
+        if (p.maker_id) {
+          countMap[p.maker_id] = (countMap[p.maker_id] || 0) + 1;
+        }
+      });
+
+      return makers.map((m) => ({
+        ...m,
+        productCount: countMap[m.id] || 0,
+      }));
     },
   });
 
@@ -297,12 +331,29 @@ export function useAdminStyles() {
   const query = useQuery({
     queryKey: ['admin-styles'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: styles, error } = await supabase
         .from('styles')
         .select('*')
         .order('name');
       if (error) throw error;
-      return data;
+
+      // Fetch product counts per style
+      const { data: productCounts, error: prodError } = await supabase
+        .from('products')
+        .select('style_id');
+      if (prodError) throw prodError;
+
+      const countMap: Record<string, number> = {};
+      productCounts?.forEach((p) => {
+        if (p.style_id) {
+          countMap[p.style_id] = (countMap[p.style_id] || 0) + 1;
+        }
+      });
+
+      return styles.map((s) => ({
+        ...s,
+        productCount: countMap[s.id] || 0,
+      }));
     },
   });
 

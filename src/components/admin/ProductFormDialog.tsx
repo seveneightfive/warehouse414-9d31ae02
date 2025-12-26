@@ -323,7 +323,7 @@ export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'b
                     <FormItem>
                       <FormLabel>Long Description</FormLabel>
                       <FormControl>
-                        <Textarea {...field} rows={5} className="border-foreground" />
+                        <Textarea {...field} rows={12} className="border-foreground" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -344,19 +344,6 @@ export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'b
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="featured_image_url"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Featured Image URL</FormLabel>
-                      <FormControl>
-                        <Input {...field} className="border-foreground" placeholder="https://..." />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </TabsContent>
 
               <TabsContent value="attributes" className="space-y-4 pt-4">

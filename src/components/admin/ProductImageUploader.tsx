@@ -1,8 +1,13 @@
 import { useState, useCallback, useRef } from 'react';
-import { Upload, X, Star, GripVertical, Loader2 } from 'lucide-react';
+import { Upload, X, Star, GripVertical, Loader2, Settings2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { optimizeImages, formatBytes, type ImageOptimizationOptions } from '@/lib/imageOptimizer';
 
 interface ProductImage {
   id: string;
@@ -27,6 +32,8 @@ interface ProductImageUploaderProps {
 interface PreviewFile {
   file: File;
   preview: string;
+  originalSize: number;
+  optimizedSize?: number;
 }
 
 export function ProductImageUploader({
@@ -45,7 +52,18 @@ export function ProductImageUploader({
   const [previewFiles, setPreviewFiles] = useState<PreviewFile[]>([]);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [isOptimizing, setIsOptimizing] = useState(false);
+  const [optimizationProgress, setOptimizationProgress] = useState(0);
+  const [showSettings, setShowSettings] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Optimization settings
+  const [optimizationOptions, setOptimizationOptions] = useState<ImageOptimizationOptions>({
+    maxWidth: 2000,
+    maxHeight: 2000,
+    quality: 0.85,
+    format: 'webp',
+  });
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -64,23 +82,61 @@ export function ProductImageUploader({
       f.type.startsWith('image/')
     );
     if (files.length > 0) {
-      addFilesToPreview(files);
+      processFiles(files);
     }
-  }, []);
+  }, [optimizationOptions]);
 
   const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
-      addFilesToPreview(files);
+      processFiles(files);
     }
-  }, []);
+  }, [optimizationOptions]);
 
-  const addFilesToPreview = (files: File[]) => {
-    const newPreviews = files.map(file => ({
-      file,
-      preview: URL.createObjectURL(file),
-    }));
-    setPreviewFiles(prev => [...prev, ...newPreviews]);
+  const processFiles = async (files: File[]) => {
+    setIsOptimizing(true);
+    setOptimizationProgress(0);
+    
+    try {
+      const optimizedFiles = await optimizeImages(
+        files,
+        optimizationOptions,
+        (completed, total) => {
+          setOptimizationProgress(Math.round((completed / total) * 100));
+        }
+      );
+      
+      const newPreviews: PreviewFile[] = optimizedFiles.map((file, i) => ({
+        file,
+        preview: URL.createObjectURL(file),
+        originalSize: files[i].size,
+        optimizedSize: file.size,
+      }));
+      
+      setPreviewFiles(prev => [...prev, ...newPreviews]);
+      
+      const totalOriginal = files.reduce((acc, f) => acc + f.size, 0);
+      const totalOptimized = optimizedFiles.reduce((acc, f) => acc + f.size, 0);
+      const savings = totalOriginal - totalOptimized;
+      
+      if (savings > 0) {
+        toast.success(`Optimized ${files.length} images, saved ${formatBytes(savings)}`);
+      }
+    } catch (error) {
+      console.error('Optimization error:', error);
+      toast.error('Failed to optimize some images');
+      
+      // Fall back to original files
+      const newPreviews = files.map(file => ({
+        file,
+        preview: URL.createObjectURL(file),
+        originalSize: file.size,
+      }));
+      setPreviewFiles(prev => [...prev, ...newPreviews]);
+    } finally {
+      setIsOptimizing(false);
+      setOptimizationProgress(0);
+    }
   };
 
   const removePreview = (index: number) => {
@@ -176,8 +232,82 @@ export function ProductImageUploader({
     setDraggedIndex(null);
   };
 
+  const totalOriginalSize = previewFiles.reduce((acc, pf) => acc + pf.originalSize, 0);
+  const totalOptimizedSize = previewFiles.reduce((acc, pf) => acc + (pf.optimizedSize || pf.originalSize), 0);
+  const totalSavings = totalOriginalSize - totalOptimizedSize;
+
   return (
     <div className="space-y-4">
+      {/* Optimization Settings */}
+      <Collapsible open={showSettings} onOpenChange={setShowSettings}>
+        <CollapsibleTrigger asChild>
+          <Button variant="outline" size="sm" className="gap-2">
+            <Settings2 className="h-4 w-4" />
+            Image Optimization Settings
+          </Button>
+        </CollapsibleTrigger>
+        <CollapsibleContent className="mt-3">
+          <div className="grid gap-4 p-4 border rounded-lg bg-muted/30">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Max Width: {optimizationOptions.maxWidth}px</Label>
+                <Slider
+                  value={[optimizationOptions.maxWidth]}
+                  onValueChange={([v]) => setOptimizationOptions(prev => ({ ...prev, maxWidth: v }))}
+                  min={800}
+                  max={4000}
+                  step={100}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Max Height: {optimizationOptions.maxHeight}px</Label>
+                <Slider
+                  value={[optimizationOptions.maxHeight]}
+                  onValueChange={([v]) => setOptimizationOptions(prev => ({ ...prev, maxHeight: v }))}
+                  min={800}
+                  max={4000}
+                  step={100}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Quality: {Math.round(optimizationOptions.quality * 100)}%</Label>
+                <Slider
+                  value={[optimizationOptions.quality * 100]}
+                  onValueChange={([v]) => setOptimizationOptions(prev => ({ ...prev, quality: v / 100 }))}
+                  min={50}
+                  max={100}
+                  step={5}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Output Format</Label>
+                <Select
+                  value={optimizationOptions.format}
+                  onValueChange={(v: 'jpeg' | 'webp' | 'png') => 
+                    setOptimizationOptions(prev => ({ ...prev, format: v }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="webp">WebP (Best compression)</SelectItem>
+                    <SelectItem value="jpeg">JPEG (Wide compatibility)</SelectItem>
+                    <SelectItem value="png">PNG (Lossless)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              WebP offers the best compression with good quality. Images are automatically resized 
+              if they exceed the max dimensions while maintaining aspect ratio.
+            </p>
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
+
       {/* Existing Images Grid */}
       {images.length > 0 && (
         <div>
@@ -252,9 +382,10 @@ export function ProductImageUploader({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        onClick={() => fileInputRef.current?.click()}
+        onClick={() => !isOptimizing && fileInputRef.current?.click()}
         className={cn(
-          "border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors",
+          "border-2 border-dashed rounded-lg p-8 text-center transition-colors",
+          isOptimizing ? "cursor-wait" : "cursor-pointer",
           isDragOver 
             ? "border-primary bg-primary/5" 
             : "border-muted-foreground/25 hover:border-primary/50"
@@ -267,27 +398,47 @@ export function ProductImageUploader({
           multiple
           onChange={handleFileSelect}
           className="hidden"
+          disabled={isOptimizing}
         />
-        <Upload className="h-10 w-10 mx-auto text-muted-foreground mb-2" />
-        <p className="text-sm font-medium">
-          Drag & drop images here, or click to select
-        </p>
-        <p className="text-xs text-muted-foreground mt-1">
-          JPG, PNG, WebP, GIF up to 10MB each
-        </p>
+        {isOptimizing ? (
+          <>
+            <Loader2 className="h-10 w-10 mx-auto text-primary animate-spin mb-2" />
+            <p className="text-sm font-medium">
+              Optimizing images... {optimizationProgress}%
+            </p>
+          </>
+        ) : (
+          <>
+            <Upload className="h-10 w-10 mx-auto text-muted-foreground mb-2" />
+            <p className="text-sm font-medium">
+              Drag & drop images here, or click to select
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Images will be auto-optimized to {optimizationOptions.format.toUpperCase()} 
+              ({Math.round(optimizationOptions.quality * 100)}% quality, max {optimizationOptions.maxWidth}x{optimizationOptions.maxHeight}px)
+            </p>
+          </>
+        )}
       </div>
 
       {/* Preview Files */}
       {previewFiles.length > 0 && (
         <div>
-          <h4 className="text-sm font-medium mb-2">
-            Ready to upload ({previewFiles.length})
-          </h4>
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-sm font-medium">
+              Ready to upload ({previewFiles.length})
+            </h4>
+            {totalSavings > 0 && (
+              <span className="text-xs text-green-600 dark:text-green-400">
+                Saved {formatBytes(totalSavings)} ({Math.round((totalSavings / totalOriginalSize) * 100)}% reduction)
+              </span>
+            )}
+          </div>
           <div className="grid grid-cols-4 gap-3">
             {previewFiles.map((pf, index) => (
               <div
                 key={index}
-                className="relative aspect-square rounded-lg border overflow-hidden"
+                className="relative aspect-square rounded-lg border overflow-hidden group"
               >
                 <img
                   src={pf.preview}
@@ -298,11 +449,19 @@ export function ProductImageUploader({
                   type="button"
                   size="icon"
                   variant="destructive"
-                  className="absolute top-1 right-1 h-6 w-6"
+                  className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                   onClick={() => removePreview(index)}
                 >
                   <X className="h-3 w-3" />
                 </Button>
+                <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] px-1.5 py-0.5">
+                  {formatBytes(pf.optimizedSize || pf.originalSize)}
+                  {pf.optimizedSize && pf.optimizedSize < pf.originalSize && (
+                    <span className="text-green-300 ml-1">
+                      (-{Math.round((1 - pf.optimizedSize / pf.originalSize) * 100)}%)
+                    </span>
+                  )}
+                </div>
               </div>
             ))}
           </div>

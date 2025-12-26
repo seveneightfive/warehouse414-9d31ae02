@@ -360,6 +360,7 @@ const ProductDetail = () => {
         open={specSheetDialogOpen}
         onOpenChange={setSpecSheetDialogOpen}
         product={product}
+        productSlug={slug}
       />
     </Layout>
   );

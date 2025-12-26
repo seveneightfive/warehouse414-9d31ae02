@@ -14,6 +14,7 @@ import { Download } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { jsPDF } from "jspdf";
+import QRCode from "qrcode";
 import warehouseLogo from "@/assets/warehouse414-logo.jpg";
 
 interface ProductData {
@@ -47,11 +48,13 @@ interface SpecSheetDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   product: ProductData;
+  productSlug?: string;
 }
 
 const PHONE_NUMBER = "785.232.8008";
+const BASE_URL = window.location.origin;
 
-const SpecSheetDialog = ({ open, onOpenChange, product }: SpecSheetDialogProps) => {
+const SpecSheetDialog = ({ open, onOpenChange, product, productSlug }: SpecSheetDialogProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [includePrice, setIncludePrice] = useState(true);
@@ -310,23 +313,54 @@ const SpecSheetDialog = ({ open, onOpenChange, product }: SpecSheetDialogProps) 
       y += 3;
     }
 
-    // Footer
-    const footerY = pageHeight - 15;
+    // Generate QR code for product page
+    const productUrl = `${BASE_URL}/product/${productSlug || product.id}`;
+    let qrCodeDataUrl: string | null = null;
+    try {
+      qrCodeDataUrl = await QRCode.toDataURL(productUrl, {
+        width: 200,
+        margin: 1,
+        color: {
+          dark: "#000000",
+          light: "#ffffff",
+        },
+      });
+    } catch (err) {
+      console.error("Error generating QR code:", err);
+    }
+
+    // Footer with QR code
+    const footerY = pageHeight - 20;
+    const qrSize = 15;
+    
+    // Add QR code on the left side of footer
+    if (qrCodeDataUrl) {
+      pdf.addImage(qrCodeDataUrl, "PNG", margin, footerY - qrSize + 8, qrSize, qrSize);
+    }
+    
+    // Footer text centered (offset for QR code)
+    const textCenterX = qrCodeDataUrl ? (pageWidth + margin + qrSize) / 2 : pageWidth / 2;
     pdf.setFontSize(8);
     pdf.setFont("helvetica", "normal");
     pdf.setTextColor(100);
     pdf.text(
       `Generated for ${name} (${email}) on ${new Date().toLocaleDateString()}`,
-      pageWidth / 2,
+      textCenterX,
       footerY,
       { align: "center" }
     );
     pdf.text(
       `Warehouse 414 • ${PHONE_NUMBER} • www.warehouse414.com`,
-      pageWidth / 2,
+      textCenterX,
       footerY + 4,
       { align: "center" }
     );
+    
+    // Small text under QR code
+    if (qrCodeDataUrl) {
+      pdf.setFontSize(6);
+      pdf.text("Scan for details", margin + qrSize / 2, footerY + 10, { align: "center" });
+    }
 
     // Download PDF
     const filename = `${product.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()}-spec-sheet.pdf`;

@@ -102,7 +102,7 @@ export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'b
       name: '',
       sku: '',
       notes: '',
-      status: 'available',
+      status: 'inventory',
     },
   });
 

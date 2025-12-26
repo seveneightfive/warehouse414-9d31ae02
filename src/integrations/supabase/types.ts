@@ -148,6 +148,27 @@ export type Database = {
           },
         ]
       }
+      periods: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
       product_colors: {
         Row: {
           color_id: string
@@ -278,6 +299,8 @@ export type Database = {
           maker_id: string | null
           materials: string | null
           name: string
+          period_attribution: string | null
+          period_id: string | null
           price: number | null
           product_depth: number | null
           product_height: number | null
@@ -313,6 +336,8 @@ export type Database = {
           maker_id?: string | null
           materials?: string | null
           name: string
+          period_attribution?: string | null
+          period_id?: string | null
           price?: number | null
           product_depth?: number | null
           product_height?: number | null
@@ -348,6 +373,8 @@ export type Database = {
           maker_id?: string | null
           materials?: string | null
           name?: string
+          period_attribution?: string | null
+          period_id?: string | null
           price?: number | null
           product_depth?: number | null
           product_height?: number | null
@@ -383,6 +410,13 @@ export type Database = {
             columns: ["maker_id"]
             isOneToOne: false
             referencedRelation: "makers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_period_id_fkey"
+            columns: ["period_id"]
+            isOneToOne: false
+            referencedRelation: "periods"
             referencedColumns: ["id"]
           },
           {

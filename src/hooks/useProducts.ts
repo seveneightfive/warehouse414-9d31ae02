@@ -15,6 +15,7 @@ export const useProducts = (filters: FilterState = {}) => {
           category:categories(*),
           subcategory:subcategories(*),
           style:styles(*),
+          period:periods(*),
           product_colors(color:colors(*)),
           product_images(*)
         `)
@@ -136,6 +137,7 @@ export const useProduct = (slug: string) => {
           category:categories(*),
           subcategory:subcategories(*),
           style:styles(*),
+          period:periods(*),
           product_colors(color:colors(*)),
           product_images(*)
         `)
@@ -162,6 +164,7 @@ export const useFeaturedProducts = (limit: number = 8) => {
           category:categories(*),
           subcategory:subcategories(*),
           style:styles(*),
+          period:periods(*),
           product_colors(color:colors(*)),
           product_images(*)
         `)

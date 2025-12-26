@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAdminProducts, ProductFormData, useProductImages } from '@/hooks/useAdminProducts';
-import { useAdminCategories, useAdminSubcategories, useAdminDesigners, useAdminMakers, useAdminStyles } from '@/hooks/useAdminAttributes';
+import { useAdminCategories, useAdminSubcategories, useAdminDesigners, useAdminMakers, useAdminStyles, useAdminPeriods } from '@/hooks/useAdminAttributes';
 import {
   Dialog,
   DialogContent,
@@ -47,6 +47,8 @@ const formSchema = z.object({
   maker_id: z.string().optional(),
   maker_attribution: z.string().optional(),
   style_id: z.string().optional(),
+  period_id: z.string().optional(),
+  period_attribution: z.string().optional(),
   year_created: z.coerce.number().optional(),
   product_width: z.coerce.number().optional(),
   product_height: z.coerce.number().optional(),
@@ -76,6 +78,7 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
   const { data: designers } = useAdminDesigners();
   const { data: makers } = useAdminMakers();
   const { data: styles } = useAdminStyles();
+  const { data: periods } = useAdminPeriods();
   
   const isEditing = !!product;
 
@@ -106,6 +109,8 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
         maker_id: product.maker_id || undefined,
         maker_attribution: product.maker_attribution || undefined,
         style_id: product.style_id || undefined,
+        period_id: product.period_id || undefined,
+        period_attribution: product.period_attribution || undefined,
         year_created: product.year_created || undefined,
         product_width: product.product_width || undefined,
         product_height: product.product_height || undefined,
@@ -163,6 +168,8 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
       maker_id: data.maker_id === 'none' ? undefined : data.maker_id,
       maker_attribution: data.maker_attribution === 'none' ? undefined : data.maker_attribution,
       style_id: data.style_id === 'none' ? undefined : data.style_id,
+      period_id: data.period_id === 'none' ? undefined : data.period_id,
+      period_attribution: data.period_attribution === 'none' ? undefined : data.period_attribution,
       year_created: data.year_created,
       product_width: data.product_width,
       product_height: data.product_height,
@@ -502,24 +509,50 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="style_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Style</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value || 'none'}>
+                        <FormControl>
+                          <SelectTrigger className="border-foreground">
+                            <SelectValue placeholder="Select style" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="none">None</SelectItem>
+                          {styles.map((s) => (
+                            <SelectItem key={s.id} value={s.id}>
+                              {s.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-3 gap-4">
                   <FormField
                     control={form.control}
-                    name="style_id"
+                    name="period_id"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Style</FormLabel>
+                      <FormItem className="col-span-2">
+                        <FormLabel>Period/Era</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value || 'none'}>
                           <FormControl>
                             <SelectTrigger className="border-foreground">
-                              <SelectValue placeholder="Select style" />
+                              <SelectValue placeholder="Select period" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="none">None</SelectItem>
-                            {styles.map((s) => (
-                              <SelectItem key={s.id} value={s.id}>
-                                {s.name}
+                            {periods.map((p) => (
+                              <SelectItem key={p.id} value={p.id}>
+                                {p.name}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -530,18 +563,42 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
                   />
                   <FormField
                     control={form.control}
-                    name="year_created"
+                    name="period_attribution"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Year Created</FormLabel>
-                        <FormControl>
-                          <Input type="number" {...field} className="border-foreground" />
-                        </FormControl>
+                        <FormLabel>Attribution</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value || 'none'}>
+                          <FormControl>
+                            <SelectTrigger className="border-foreground">
+                              <SelectValue placeholder="None" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="none">None</SelectItem>
+                            <SelectItem value="attributed to">Attributed to</SelectItem>
+                            <SelectItem value="by">By</SelectItem>
+                            <SelectItem value="in the style of">In the style of</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
+
+                <FormField
+                  control={form.control}
+                  name="year_created"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Year Created</FormLabel>
+                      <FormControl>
+                        <Input type="number" {...field} className="border-foreground" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </TabsContent>
 
               <TabsContent value="dimensions" className="space-y-4 pt-4">

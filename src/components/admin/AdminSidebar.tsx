@@ -25,6 +25,7 @@ import {
   Users,
   Tag,
   Layers,
+  Calendar,
 } from 'lucide-react';
 
 const menuItems = [
@@ -40,6 +41,7 @@ const attributeItems = [
   { title: 'Makers', url: '/admin/makers', icon: Tag },
   { title: 'Categories', url: '/admin/categories', icon: Layers },
   { title: 'Styles', url: '/admin/styles', icon: Palette },
+  { title: 'Periods', url: '/admin/periods', icon: Calendar },
 ];
 
 export function AdminSidebar() {

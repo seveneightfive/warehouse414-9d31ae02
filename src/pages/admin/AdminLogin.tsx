@@ -12,12 +12,25 @@ export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { signIn } = useAuth();
+  const [isSignUp, setIsSignUp] = useState(false);
+  const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    if (isSignUp) {
+      const { error } = await signUp(email, password);
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success('Account created! Now sign in, then contact support to get admin access.');
+        setIsSignUp(false);
+      }
+      setIsSubmitting(false);
+      return;
+    }
 
     const { error } = await signIn(email, password);
 
@@ -37,7 +50,9 @@ export default function AdminLogin() {
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 h-4 w-32 stripe-pattern" />
           <CardTitle className="font-display text-4xl">Warehouse414</CardTitle>
-          <CardDescription className="font-body">Admin Portal</CardDescription>
+          <CardDescription className="font-body">
+            {isSignUp ? 'Create Admin Account' : 'Admin Portal'}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -62,6 +77,7 @@ export default function AdminLogin() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
+                minLength={6}
                 className="border-foreground"
               />
             </div>
@@ -73,13 +89,22 @@ export default function AdminLogin() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
+                  {isSignUp ? 'Creating account...' : 'Signing in...'}
                 </>
               ) : (
-                'Sign In'
+                isSignUp ? 'Create Account' : 'Sign In'
               )}
             </Button>
           </form>
+          <div className="mt-4 text-center">
+            <button
+              type="button"
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="text-sm text-muted-foreground hover:text-foreground underline"
+            >
+              {isSignUp ? 'Already have an account? Sign in' : 'Need an account? Sign up'}
+            </button>
+          </div>
         </CardContent>
       </Card>
     </div>

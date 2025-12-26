@@ -49,6 +49,9 @@ export interface Product {
   id: string;
   name: string;
   slug: string;
+  sku: string | null;
+  tags: string[] | null;
+  materials: string | null;
   short_description: string | null;
   long_description: string | null;
   price: number | null;
@@ -56,9 +59,12 @@ export interface Product {
   product_width: number | null;
   product_height: number | null;
   product_depth: number | null;
+  product_weight: number | null;
+  dimension_notes: string | null;
   box_width: number | null;
   box_height: number | null;
   box_depth: number | null;
+  box_weight: number | null;
   featured_image_url: string | null;
   status: ProductStatus;
   designer_id: string | null;

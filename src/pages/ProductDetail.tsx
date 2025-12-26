@@ -27,13 +27,17 @@ const ProductDetail = () => {
     }).format(price);
   };
 
-  const formatDimensions = (w: number | null, h: number | null, d: number | null) => {
-    if (!w && !h && !d) return null;
+  const formatDimensions = (w: number | null, h: number | null, d: number | null, weight: number | null = null) => {
+    if (!w && !h && !d && !weight) return null;
     const parts = [];
     if (w) parts.push(`${w}"W`);
     if (h) parts.push(`${h}"H`);
     if (d) parts.push(`${d}"D`);
-    return parts.join(' × ');
+    const dimStr = parts.join(' × ');
+    if (weight) {
+      return dimStr ? `${dimStr} • ${weight} lbs` : `${weight} lbs`;
+    }
+    return dimStr;
   };
 
   if (isLoading) {
@@ -70,8 +74,8 @@ const ProductDetail = () => {
     );
   }
 
-  const productDimensions = formatDimensions(product.product_width, product.product_height, product.product_depth);
-  const boxDimensions = formatDimensions(product.box_width, product.box_height, product.box_depth);
+  const productDimensions = formatDimensions(product.product_width, product.product_height, product.product_depth, product.product_weight);
+  const boxDimensions = formatDimensions(product.box_width, product.box_height, product.box_depth, product.box_weight);
   const isAvailable = product.status === 'available';
 
   return (
@@ -164,13 +168,27 @@ const ProductDetail = () => {
               ))}
             </div>
 
+            {/* Materials */}
+            {product.materials && (
+              <div className="mt-6">
+                <p className="font-body text-sm">
+                  <span className="text-muted-foreground">Materials:</span> {product.materials}
+                </p>
+              </div>
+            )}
+
             {/* Dimensions */}
-            {(productDimensions || boxDimensions) && (
+            {(productDimensions || boxDimensions || product.dimension_notes) && (
               <div className="mt-8 p-4 bg-secondary">
                 <h3 className="font-display text-lg mb-3">DIMENSIONS</h3>
                 {productDimensions && (
                   <p className="font-body text-sm">
                     <span className="text-muted-foreground">Product:</span> {productDimensions}
+                  </p>
+                )}
+                {product.dimension_notes && (
+                  <p className="font-body text-sm mt-1 text-muted-foreground italic">
+                    {product.dimension_notes}
                   </p>
                 )}
                 {boxDimensions && (

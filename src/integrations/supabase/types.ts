@@ -261,81 +261,99 @@ export type Database = {
         Row: {
           box_depth: number | null
           box_height: number | null
+          box_weight: number | null
           box_width: number | null
           category_id: string | null
           chairish_url: string | null
           created_at: string
           designer_id: string | null
+          dimension_notes: string | null
           ebay_url: string | null
           featured_image_url: string | null
           firstdibs_url: string | null
           id: string
           long_description: string | null
           maker_id: string | null
+          materials: string | null
           name: string
           price: number | null
           product_depth: number | null
           product_height: number | null
+          product_weight: number | null
           product_width: number | null
           short_description: string | null
+          sku: string | null
           slug: string
           status: Database["public"]["Enums"]["product_status"]
           style_id: string | null
           subcategory_id: string | null
+          tags: string[] | null
           updated_at: string
           year_created: number | null
         }
         Insert: {
           box_depth?: number | null
           box_height?: number | null
+          box_weight?: number | null
           box_width?: number | null
           category_id?: string | null
           chairish_url?: string | null
           created_at?: string
           designer_id?: string | null
+          dimension_notes?: string | null
           ebay_url?: string | null
           featured_image_url?: string | null
           firstdibs_url?: string | null
           id?: string
           long_description?: string | null
           maker_id?: string | null
+          materials?: string | null
           name: string
           price?: number | null
           product_depth?: number | null
           product_height?: number | null
+          product_weight?: number | null
           product_width?: number | null
           short_description?: string | null
+          sku?: string | null
           slug: string
           status?: Database["public"]["Enums"]["product_status"]
           style_id?: string | null
           subcategory_id?: string | null
+          tags?: string[] | null
           updated_at?: string
           year_created?: number | null
         }
         Update: {
           box_depth?: number | null
           box_height?: number | null
+          box_weight?: number | null
           box_width?: number | null
           category_id?: string | null
           chairish_url?: string | null
           created_at?: string
           designer_id?: string | null
+          dimension_notes?: string | null
           ebay_url?: string | null
           featured_image_url?: string | null
           firstdibs_url?: string | null
           id?: string
           long_description?: string | null
           maker_id?: string | null
+          materials?: string | null
           name?: string
           price?: number | null
           product_depth?: number | null
           product_height?: number | null
+          product_weight?: number | null
           product_width?: number | null
           short_description?: string | null
+          sku?: string | null
           slug?: string
           status?: Database["public"]["Enums"]["product_status"]
           style_id?: string | null
           subcategory_id?: string | null
+          tags?: string[] | null
           updated_at?: string
           year_created?: number | null
         }

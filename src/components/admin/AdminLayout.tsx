@@ -1,9 +1,11 @@
 import { ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AdminSidebar } from './AdminSidebar';
 import { Loader2 } from 'lucide-react';
+import logoTop from '@/assets/logo-top.png';
+import logoBottom from '@/assets/logo-bottom.png';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -42,6 +44,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         <main className="flex-1 flex flex-col">
           <header className="h-14 border-b border-border flex items-center px-4 gap-4">
             <SidebarTrigger />
+            <Link to="/" className="flex items-center gap-1 hover:opacity-80 transition-opacity">
+              <img src={logoTop} alt="Warehouse" className="h-6 w-auto" />
+              <img src={logoBottom} alt="414" className="h-6 w-auto" />
+            </Link>
           </header>
           <div className="flex-1 p-6 overflow-auto">
             {children}

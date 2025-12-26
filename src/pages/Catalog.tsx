@@ -5,10 +5,9 @@ import ProductGrid from "@/components/products/ProductGrid";
 import ProductFilters from "@/components/products/ProductFilters";
 import { useProducts } from "@/hooks/useProducts";
 import { FilterState } from "@/types/database";
-
 const Catalog = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  
+
   // Initialize filters from URL params
   const initialFilters: FilterState = {
     designer: searchParams.get('designer') || undefined,
@@ -16,15 +15,16 @@ const Catalog = () => {
     color: searchParams.get('color') || undefined,
     category: searchParams.get('category') || undefined,
     style: searchParams.get('style') || undefined,
-    search: searchParams.get('search') || undefined,
+    search: searchParams.get('search') || undefined
   };
-
   const [filters, setFilters] = useState<FilterState>(initialFilters);
-  const { data: products, isLoading } = useProducts(filters);
-
+  const {
+    data: products,
+    isLoading
+  } = useProducts(filters);
   const handleFiltersChange = (newFilters: FilterState) => {
     setFilters(newFilters);
-    
+
     // Update URL params
     const params = new URLSearchParams();
     Object.entries(newFilters).forEach(([key, value]) => {
@@ -32,11 +32,9 @@ const Catalog = () => {
     });
     setSearchParams(params);
   };
-
-  return (
-    <Layout>
+  return <Layout>
       {/* Page Header */}
-      <section className="py-12 md:py-16 bg-secondary stripe-border">
+      <section className="py-12 md:py-16 stripe-border text-primary-foreground border-none bg-primary">
         <div className="container mx-auto px-4">
           <h1 className="font-display text-4xl md:text-6xl text-center">CATALOG</h1>
           <p className="font-body text-muted-foreground text-center mt-2">
@@ -55,8 +53,6 @@ const Catalog = () => {
           </div>
         </div>
       </section>
-    </Layout>
-  );
+    </Layout>;
 };
-
 export default Catalog;

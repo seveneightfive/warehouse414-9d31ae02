@@ -360,33 +360,7 @@ export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'b
               </TabsContent>
 
               <TabsContent value="attributes" className="space-y-4 pt-4">
-                <FormField
-                  control={form.control}
-                  name="tags"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tags</FormLabel>
-                      <FormControl>
-                        <Input {...field} className="border-foreground" placeholder="vintage, mid-century, brass (comma-separated)" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="materials"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Materials</FormLabel>
-                      <FormControl>
-                        <Input {...field} className="border-foreground" placeholder="Wood, brass, leather, etc." />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/* Category and Subcategory - Top */}
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
@@ -457,6 +431,7 @@ export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'b
                   />
                 </div>
 
+                {/* Designer with Attribution */}
                 <div className="grid grid-cols-3 gap-4">
                   <FormField
                     control={form.control}
@@ -508,6 +483,7 @@ export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'b
                   />
                 </div>
 
+                {/* Maker with Attribution */}
                 <div className="grid grid-cols-3 gap-4">
                   <FormField
                     control={form.control}
@@ -559,92 +535,126 @@ export function ProductFormDialog({ open, onOpenChange, product, initialTab = 'b
                   />
                 </div>
 
-                <FormField
-                  control={form.control}
-                  name="style_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Style</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value || 'none'}>
-                        <FormControl>
-                          <SelectTrigger className="border-foreground">
-                            <SelectValue placeholder="Select style" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="none">None</SelectItem>
-                          {styles.map((s) => (
-                            <SelectItem key={s.id} value={s.id}>
-                              {s.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/* Style and Period/Era - 50/50 */}
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="style_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Style</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value || 'none'}>
+                          <FormControl>
+                            <SelectTrigger className="border-foreground">
+                              <SelectValue placeholder="Select style" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="none">None</SelectItem>
+                            {styles.map((s) => (
+                              <SelectItem key={s.id} value={s.id}>
+                                {s.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="period_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Period/Era</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value || 'none'}>
+                          <FormControl>
+                            <SelectTrigger className="border-foreground">
+                              <SelectValue placeholder="Select period" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="none">None</SelectItem>
+                            {periods.map((p) => (
+                              <SelectItem key={p.id} value={p.id}>
+                                {p.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-                <FormField
-                  control={form.control}
-                  name="period_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Period/Era</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value || 'none'}>
+                {/* Country and Year Created - 50/50 */}
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="country_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Country of Origin</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value || 'none'}>
+                          <FormControl>
+                            <SelectTrigger className="border-foreground">
+                              <SelectValue placeholder="Select country" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="none">None</SelectItem>
+                            {countries.map((c) => (
+                              <SelectItem key={c.id} value={c.id}>
+                                {c.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="year_created"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Year Created</FormLabel>
                         <FormControl>
-                          <SelectTrigger className="border-foreground">
-                            <SelectValue placeholder="Select period" />
-                          </SelectTrigger>
+                          <Input {...field} className="border-foreground" placeholder="e.g., 1960s, circa 1975" />
                         </FormControl>
-                        <SelectContent>
-                          <SelectItem value="none">None</SelectItem>
-                          {periods.map((p) => (
-                            <SelectItem key={p.id} value={p.id}>
-                              {p.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
+                {/* Materials */}
                 <FormField
                   control={form.control}
-                  name="country_id"
+                  name="materials"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Country of Origin</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value || 'none'}>
-                        <FormControl>
-                          <SelectTrigger className="border-foreground">
-                            <SelectValue placeholder="Select country" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="none">None</SelectItem>
-                          {countries.map((c) => (
-                            <SelectItem key={c.id} value={c.id}>
-                              {c.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="year_created"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Year Created</FormLabel>
+                      <FormLabel>Materials</FormLabel>
                       <FormControl>
-                        <Input {...field} className="border-foreground" placeholder="e.g., 1960s, circa 1975, early 20th century" />
+                        <Input {...field} className="border-foreground" placeholder="Wood, brass, leather, etc." />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Tags - Last */}
+                <FormField
+                  control={form.control}
+                  name="tags"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tags</FormLabel>
+                      <FormControl>
+                        <Input {...field} className="border-foreground" placeholder="vintage, mid-century, brass (comma-separated)" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

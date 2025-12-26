@@ -31,6 +31,7 @@ interface Subcategory {
   name: string;
   slug: string;
   category_id: string | null;
+  productCount: number;
 }
 
 interface CategoryWithCounts {
@@ -234,7 +235,10 @@ export default function AdminCategories() {
                                   <div className="space-y-2">
                                     {category.subcategories.map((sub) => (
                                       <div key={sub.id} className="flex items-center justify-between py-2 px-3 border border-border rounded">
-                                        <span className="text-sm">{sub.name}</span>
+                                        <div className="flex items-center gap-3">
+                                          <span className="text-sm">{sub.name}</span>
+                                          <span className="text-xs text-muted-foreground">({sub.productCount} products)</span>
+                                        </div>
                                         <div className="flex items-center gap-1">
                                           <Button
                                             variant="ghost"

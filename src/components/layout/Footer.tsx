@@ -52,6 +52,9 @@ const Footer = () => {
               <a href="mailto:chris@warehouse414.com" className="hover:text-primary-foreground transition-colors">
                 chris@warehouse414.com
               </a>
+              <a href="tel:17852328008" className="hover:text-primary-foreground transition-colors">
+                785.232.8008
+              </a>
             </div>
           </div>
         </div>

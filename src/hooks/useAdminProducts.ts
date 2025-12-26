@@ -19,6 +19,8 @@ export interface ProductFormData {
   maker_id?: string;
   maker_attribution?: string;
   style_id?: string;
+  period_id?: string;
+  period_attribution?: string;
   year_created?: number;
   product_width?: number;
   product_height?: number;

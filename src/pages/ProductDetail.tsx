@@ -156,6 +156,14 @@ const ProductDetail = () => {
                   </Badge>
                 </Link>
               )}
+              {product.period && (
+                <Link to={`/catalog?period=${product.period.slug}`}>
+                  <Badge variant="outline" className="font-body hover:bg-secondary cursor-pointer">
+                    {product.period.name}
+                    {product.period_attribution && ` (${product.period_attribution})`}
+                  </Badge>
+                </Link>
+              )}
               {product.year_created && (
                 <Badge variant="outline" className="font-body">
                   c. {product.year_created}

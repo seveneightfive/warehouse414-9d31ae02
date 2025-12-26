@@ -43,6 +43,13 @@ export interface Style {
   created_at: string;
 }
 
+export interface Period {
+  id: string;
+  name: string;
+  slug: string;
+  created_at: string;
+}
+
 export type ProductStatus = 'available' | 'on_hold' | 'sold';
 
 export interface Product {
@@ -74,6 +81,8 @@ export interface Product {
   category_id: string | null;
   subcategory_id: string | null;
   style_id: string | null;
+  period_id: string | null;
+  period_attribution: string | null;
   firstdibs_url: string | null;
   chairish_url: string | null;
   ebay_url: string | null;
@@ -87,6 +96,7 @@ export interface ProductWithRelations extends Product {
   category: Category | null;
   subcategory: Subcategory | null;
   style: Style | null;
+  period: Period | null;
   product_colors: Array<{ color: Color }>;
   product_images: ProductImage[];
 }

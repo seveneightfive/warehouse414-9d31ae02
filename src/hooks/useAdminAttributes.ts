@@ -235,6 +235,57 @@ export function useAdminStyles() {
   return { data: query.data || [], isLoading: query.isLoading, create, update, remove };
 }
 
+export function useAdminPeriods() {
+  const queryClient = useQueryClient();
+
+  const query = useQuery({
+    queryKey: ['admin-periods'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('periods')
+        .select('*')
+        .order('name');
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const create = useMutation({
+    mutationFn: async ({ name, slug }: { name: string; slug: string }) => {
+      const { error } = await supabase.from('periods').insert({ name, slug });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-periods'] });
+      toast.success('Period created');
+    },
+  });
+
+  const update = useMutation({
+    mutationFn: async ({ id, name, slug }: { id: string; name: string; slug: string }) => {
+      const { error } = await supabase.from('periods').update({ name, slug }).eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-periods'] });
+      toast.success('Period updated');
+    },
+  });
+
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('periods').delete().eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-periods'] });
+      toast.success('Period deleted');
+    },
+  });
+
+  return { data: query.data || [], isLoading: query.isLoading, create, update, remove };
+}
+
 export function useAdminColors() {
   const queryClient = useQueryClient();
 

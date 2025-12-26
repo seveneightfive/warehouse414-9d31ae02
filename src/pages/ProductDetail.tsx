@@ -10,13 +10,14 @@ import { useProductActions } from "@/hooks/useProductActions";
 import HoldDialog from "@/components/dialogs/HoldDialog";
 import OfferDialog from "@/components/dialogs/OfferDialog";
 import PurchaseDialog from "@/components/dialogs/PurchaseDialog";
+import SpecSheetDialog from "@/components/dialogs/SpecSheetDialog";
 import ProductImageGallery from "@/components/products/ProductImageGallery";
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: product, isLoading } = useProduct(slug || '');
   const actions = useProductActions();
-  const [includePriceInPdf, setIncludePriceInPdf] = useState(true);
+  const [specSheetDialogOpen, setSpecSheetDialogOpen] = useState(false);
 
   const formatPrice = (price: number | null) => {
     if (!price) return "Price on request";
@@ -128,7 +129,7 @@ const ProductDetail = () => {
             <div className="mt-6 flex flex-wrap gap-2">
               {product.designer && (
                 <Link to={`/designer/${product.designer.slug}`}>
-                  <Badge variant="outline" className="font-body hover:bg-secondary cursor-pointer">
+                  <Badge variant="tag" className="font-body cursor-pointer">
                     {product.designer.name}
                     {product.designer_attribution && ` (${product.designer_attribution})`}
                   </Badge>
@@ -136,7 +137,7 @@ const ProductDetail = () => {
               )}
               {product.maker && (
                 <Link to={`/catalog?maker=${product.maker.slug}`}>
-                  <Badge variant="outline" className="font-body hover:bg-secondary cursor-pointer">
+                  <Badge variant="tag" className="font-body cursor-pointer">
                     {product.maker.name}
                     {product.maker_attribution && ` (${product.maker_attribution})`}
                   </Badge>
@@ -144,21 +145,21 @@ const ProductDetail = () => {
               )}
               {product.category && (
                 <Link to={`/catalog?category=${product.category.slug}`}>
-                  <Badge variant="outline" className="font-body hover:bg-secondary cursor-pointer">
+                  <Badge variant="tag" className="font-body cursor-pointer">
                     {product.category.name}
                   </Badge>
                 </Link>
               )}
               {product.style && (
                 <Link to={`/catalog?style=${product.style.slug}`}>
-                  <Badge variant="outline" className="font-body hover:bg-secondary cursor-pointer">
+                  <Badge variant="tag" className="font-body cursor-pointer">
                     {product.style.name}
                   </Badge>
                 </Link>
               )}
               {product.period && (
                 <Link to={`/catalog?period=${product.period.slug}`}>
-                  <Badge variant="outline" className="font-body hover:bg-secondary cursor-pointer">
+                  <Badge variant="tag" className="font-body cursor-pointer">
                     {product.period.name}
                     {product.period_attribution && ` (${product.period_attribution})`}
                   </Badge>
@@ -166,19 +167,19 @@ const ProductDetail = () => {
               )}
               {product.country && (
                 <Link to={`/catalog?country=${product.country.slug}`}>
-                  <Badge variant="outline" className="font-body hover:bg-secondary cursor-pointer">
+                  <Badge variant="tag" className="font-body cursor-pointer">
                     {product.country.name}
                   </Badge>
                 </Link>
               )}
               {product.year_created && (
-                <Badge variant="outline" className="font-body">
+                <Badge variant="tag" className="font-body">
                   c. {product.year_created}
                 </Badge>
               )}
               {product.product_colors?.map(({ color }) => (
                 <Link key={color.id} to={`/catalog?color=${color.slug}`}>
-                  <Badge variant="outline" className="font-body hover:bg-secondary cursor-pointer">
+                  <Badge variant="tag" className="font-body cursor-pointer">
                     {color.name}
                   </Badge>
                 </Link>
@@ -257,14 +258,25 @@ const ProductDetail = () => {
             <div className="mt-8 space-y-3">
               {isAvailable ? (
                 <>
-                  <Button 
-                    className="w-full font-body uppercase tracking-widest"
-                    size="lg"
-                    onClick={() => actions.setPurchaseDialogOpen(true)}
-                  >
-                    <ShoppingCart className="mr-2 h-4 w-4" />
-                    Purchase Inquiry
-                  </Button>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button 
+                      className="font-body uppercase tracking-widest"
+                      size="lg"
+                      onClick={() => actions.setPurchaseDialogOpen(true)}
+                    >
+                      <ShoppingCart className="mr-2 h-4 w-4" />
+                      Purchase
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      size="lg"
+                      className="font-body uppercase tracking-widest"
+                      onClick={() => actions.setOfferDialogOpen(true)}
+                    >
+                      <DollarSign className="mr-2 h-4 w-4" />
+                      Make Offer
+                    </Button>
+                  </div>
                   <div className="grid grid-cols-2 gap-3">
                     <Button 
                       variant="outline"
@@ -277,10 +289,10 @@ const ProductDetail = () => {
                     <Button 
                       variant="outline"
                       className="font-body uppercase tracking-widest"
-                      onClick={() => actions.setOfferDialogOpen(true)}
+                      onClick={() => setSpecSheetDialogOpen(true)}
                     >
-                      <DollarSign className="mr-2 h-4 w-4" />
-                      Make Offer
+                      <Download className="mr-2 h-4 w-4" />
+                      Spec Sheet
                     </Button>
                   </div>
                 </>
@@ -289,30 +301,6 @@ const ProductDetail = () => {
                   {product.status === 'on_hold' ? 'Currently On Hold' : 'Sold'}
                 </Button>
               )}
-
-              {/* Spec Sheet Download */}
-              <div className="flex items-center gap-3 pt-2">
-                <Button 
-                  variant="ghost" 
-                  className="flex-1 font-body text-sm"
-                  onClick={() => {
-                    // TODO: Implement PDF generation edge function
-                    console.log('Download spec sheet', { includePriceInPdf });
-                  }}
-                >
-                  <Download className="mr-2 h-4 w-4" />
-                  Download Spec Sheet
-                </Button>
-                <label className="flex items-center gap-2 font-body text-xs text-muted-foreground cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    checked={includePriceInPdf}
-                    onChange={(e) => setIncludePriceInPdf(e.target.checked)}
-                    className="rounded border-border"
-                  />
-                  Include price
-                </label>
-              </div>
             </div>
 
             {/* Long Description */}
@@ -367,6 +355,11 @@ const ProductDetail = () => {
         price={product.price}
         onSubmit={actions.sendPurchaseInquiry}
         isLoading={actions.isSendingInquiry}
+      />
+      <SpecSheetDialog
+        open={specSheetDialogOpen}
+        onOpenChange={setSpecSheetDialogOpen}
+        product={product}
       />
     </Layout>
   );

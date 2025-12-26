@@ -26,7 +26,7 @@ export default function AdminDesigners() {
   const { data: designers, isLoading, create, update, remove } = useAdminDesigners();
   const [search, setSearch] = useState('');
   const [formOpen, setFormOpen] = useState(false);
-  const [editing, setEditing] = useState<{ id: string; name: string; slug: string } | null>(null);
+  const [editing, setEditing] = useState<{ id: string; name: string; slug: string; about?: string | null } | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const filtered = designers.filter(
@@ -35,10 +35,13 @@ export default function AdminDesigners() {
       d.slug.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleSave = (data: { name: string; slug: string }) => {
+  const handleSave = (data: { name: string; slug: string; about?: string }) => {
     if (editing) {
       update.mutate({ id: editing.id, ...data }, {
-        onSuccess: () => setFormOpen(false),
+        onSuccess: () => {
+          setFormOpen(false);
+          setEditing(null);
+        },
       });
     } else {
       create.mutate(data, {
@@ -79,6 +82,7 @@ export default function AdminDesigners() {
               <TableRow className="border-foreground">
                 <TableHead>Name</TableHead>
                 <TableHead>Slug</TableHead>
+                <TableHead>About</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead className="w-16"></TableHead>
               </TableRow>
@@ -86,13 +90,13 @@ export default function AdminDesigners() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
                     Loading...
                   </TableCell>
                 </TableRow>
               ) : filtered.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
                     No designers found
                   </TableCell>
                 </TableRow>
@@ -101,6 +105,9 @@ export default function AdminDesigners() {
                   <TableRow key={designer.id} className="border-foreground">
                     <TableCell className="font-medium">{designer.name}</TableCell>
                     <TableCell className="text-muted-foreground">{designer.slug}</TableCell>
+                    <TableCell className="text-muted-foreground max-w-[200px] truncate">
+                      {designer.about || '—'}
+                    </TableCell>
                     <TableCell className="text-muted-foreground">
                       {format(new Date(designer.created_at), 'MMM d, yyyy')}
                     </TableCell>
@@ -138,11 +145,15 @@ export default function AdminDesigners() {
 
       <AttributeFormDialog
         open={formOpen}
-        onOpenChange={setFormOpen}
+        onOpenChange={(open) => {
+          setFormOpen(open);
+          if (!open) setEditing(null);
+        }}
         title="Designer"
         attribute={editing}
         onSave={handleSave}
         isPending={create.isPending || update.isPending}
+        showAbout
       />
 
       <DeleteConfirmDialog

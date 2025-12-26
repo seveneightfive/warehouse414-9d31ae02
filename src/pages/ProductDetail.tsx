@@ -123,7 +123,7 @@ const ProductDetail = () => {
             {/* Attributes */}
             <div className="mt-6 flex flex-wrap gap-2">
               {product.designer && (
-                <Link to={`/catalog?designer=${product.designer.slug}`}>
+                <Link to={`/designer/${product.designer.slug}`}>
                   <Badge variant="outline" className="font-body hover:bg-secondary cursor-pointer">
                     {product.designer.name}
                   </Badge>
@@ -287,6 +287,19 @@ const ProductDetail = () => {
                 <div className="font-body text-muted-foreground space-y-4 whitespace-pre-wrap">
                   {product.long_description}
                 </div>
+              </div>
+            )}
+
+            {/* Designer About */}
+            {product.designer?.about && (
+              <div className="mt-8 pt-8 border-t border-border">
+                <h3 className="font-display text-xl mb-4">ABOUT THE DESIGNER</h3>
+                <Link to={`/designer/${product.designer.slug}`} className="font-body text-lg font-medium hover:underline">
+                  {product.designer.name}
+                </Link>
+                <p className="font-body text-muted-foreground mt-2 whitespace-pre-wrap">
+                  {product.designer.about}
+                </p>
               </div>
             )}
           </div>

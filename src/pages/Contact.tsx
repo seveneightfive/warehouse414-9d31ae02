@@ -30,7 +30,7 @@ const Contact = () => {
   };
   return <Layout>
       {/* Hero */}
-      <section className="py-16 md:py-24 bg-secondary stripe-border">
+      <section className="py-16 md:py-24 stripe-border bg-primary text-primary-foreground">
         <div className="container mx-auto px-4">
           <h1 className="font-display text-5xl md:text-7xl text-center">CONTACT</h1>
         </div>

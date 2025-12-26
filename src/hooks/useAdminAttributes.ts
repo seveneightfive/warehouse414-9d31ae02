@@ -120,24 +120,32 @@ export function useAdminCategoriesWithCounts() {
         .order('name');
       if (catError) throw catError;
 
-      // Fetch product counts per category
+      // Fetch product counts per category and subcategory
       const { data: productCounts, error: prodError } = await supabase
         .from('products')
-        .select('category_id');
+        .select('category_id, subcategory_id');
       if (prodError) throw prodError;
 
       // Count products per category
-      const countMap: Record<string, number> = {};
+      const categoryCountMap: Record<string, number> = {};
+      const subcategoryCountMap: Record<string, number> = {};
       productCounts?.forEach((p) => {
         if (p.category_id) {
-          countMap[p.category_id] = (countMap[p.category_id] || 0) + 1;
+          categoryCountMap[p.category_id] = (categoryCountMap[p.category_id] || 0) + 1;
+        }
+        if (p.subcategory_id) {
+          subcategoryCountMap[p.subcategory_id] = (subcategoryCountMap[p.subcategory_id] || 0) + 1;
         }
       });
 
       return categories.map((cat) => ({
         ...cat,
-        productCount: countMap[cat.id] || 0,
+        productCount: categoryCountMap[cat.id] || 0,
         subcategoryCount: cat.subcategories?.length || 0,
+        subcategories: (cat.subcategories || []).map((sub: { id: string; name: string; slug: string; category_id: string | null }) => ({
+          ...sub,
+          productCount: subcategoryCountMap[sub.id] || 0,
+        })),
       }));
     },
   });

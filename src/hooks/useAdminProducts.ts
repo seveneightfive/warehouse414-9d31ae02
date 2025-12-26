@@ -11,7 +11,9 @@ export interface ProductFormData {
   short_description?: string;
   long_description?: string;
   price?: number;
-  status: 'available' | 'on_hold' | 'sold';
+  status: 'available' | 'on_hold' | 'sold' | 'inventory';
+  notes?: string;
+  go_live_date?: string;
   category_id?: string;
   subcategory_id?: string;
   designer_id?: string;

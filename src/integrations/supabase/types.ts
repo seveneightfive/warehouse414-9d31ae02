@@ -318,12 +318,14 @@ export type Database = {
           ebay_url: string | null
           featured_image_url: string | null
           firstdibs_url: string | null
+          go_live_date: string | null
           id: string
           long_description: string | null
           maker_attribution: string | null
           maker_id: string | null
           materials: string | null
           name: string
+          notes: string | null
           period_attribution: string | null
           period_id: string | null
           price: number | null
@@ -356,12 +358,14 @@ export type Database = {
           ebay_url?: string | null
           featured_image_url?: string | null
           firstdibs_url?: string | null
+          go_live_date?: string | null
           id?: string
           long_description?: string | null
           maker_attribution?: string | null
           maker_id?: string | null
           materials?: string | null
           name: string
+          notes?: string | null
           period_attribution?: string | null
           period_id?: string | null
           price?: number | null
@@ -394,12 +398,14 @@ export type Database = {
           ebay_url?: string | null
           featured_image_url?: string | null
           firstdibs_url?: string | null
+          go_live_date?: string | null
           id?: string
           long_description?: string | null
           maker_attribution?: string | null
           maker_id?: string | null
           materials?: string | null
           name?: string
+          notes?: string | null
           period_attribution?: string | null
           period_id?: string | null
           price?: number | null
@@ -618,7 +624,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator"
-      product_status: "available" | "on_hold" | "sold"
+      product_status: "available" | "on_hold" | "sold" | "inventory"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -747,7 +753,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator"],
-      product_status: ["available", "on_hold", "sold"],
+      product_status: ["available", "on_hold", "sold", "inventory"],
     },
   },
 } as const

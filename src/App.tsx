@@ -23,6 +23,7 @@ import AdminCategories from "./pages/admin/AdminCategories";
 import AdminStyles from "./pages/admin/AdminStyles";
 import AdminPeriods from "./pages/admin/AdminPeriods";
 import AdminCountries from "./pages/admin/AdminCountries";
+import AdminInventory from "./pages/admin/AdminInventory";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/products" element={<AdminProducts />} />
+            <Route path="/admin/inventory" element={<AdminInventory />} />
             <Route path="/admin/holds" element={<AdminHolds />} />
             <Route path="/admin/offers" element={<AdminOffers />} />
             <Route path="/admin/inquiries" element={<AdminInquiries />} />

@@ -27,11 +27,13 @@ import {
   Layers,
   Calendar,
   Globe,
+  Archive,
 } from 'lucide-react';
 
 const menuItems = [
   { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
   { title: 'Products', url: '/admin/products', icon: Package },
+  { title: 'Inventory', url: '/admin/inventory', icon: Archive },
   { title: 'Holds', url: '/admin/holds', icon: Clock },
   { title: 'Offers', url: '/admin/offers', icon: DollarSign },
   { title: 'Inquiries', url: '/admin/inquiries', icon: ShoppingCart },

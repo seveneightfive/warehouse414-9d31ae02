@@ -58,7 +58,7 @@ export interface Country {
   created_at: string;
 }
 
-export type ProductStatus = 'available' | 'on_hold' | 'sold';
+export type ProductStatus = 'available' | 'on_hold' | 'sold' | 'inventory';
 
 export interface Product {
   id: string;
@@ -95,6 +95,8 @@ export interface Product {
   firstdibs_url: string | null;
   chairish_url: string | null;
   ebay_url: string | null;
+  notes: string | null;
+  go_live_date: string | null;
   created_at: string;
   updated_at: string;
 }

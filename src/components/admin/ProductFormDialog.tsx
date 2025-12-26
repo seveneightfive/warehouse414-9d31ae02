@@ -40,6 +40,7 @@ const formSchema = z.object({
   materials: z.string().optional(),
   short_description: z.string().optional(),
   long_description: z.string().optional(),
+  notes: z.string().optional(),
   price: z.coerce.number().optional(),
   status: z.enum(['available', 'on_hold', 'sold']),
   category_id: z.string().optional(),
@@ -100,6 +101,7 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
     defaultValues: {
       name: '',
       sku: '',
+      notes: '',
       status: 'available',
     },
   });
@@ -113,8 +115,9 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
         materials: product.materials || '',
         short_description: product.short_description || '',
         long_description: product.long_description || '',
+        notes: product.notes || '',
         price: product.price || undefined,
-        status: product.status || 'available',
+        status: product.status === 'inventory' ? 'available' : (product.status || 'available'),
         category_id: product.category_id || undefined,
         subcategory_id: product.subcategory_id || undefined,
         designer_id: product.designer_id || undefined,
@@ -144,6 +147,7 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
       form.reset({
         name: '',
         sku: '',
+        notes: '',
         status: 'available',
       });
     }
@@ -172,6 +176,7 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
       tags,
       materials: data.materials,
       status: data.status,
+      notes: data.notes,
       short_description: data.short_description,
       long_description: data.long_description,
       price: data.price,
@@ -321,6 +326,20 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
                       <FormLabel>Long Description</FormLabel>
                       <FormControl>
                         <Textarea {...field} rows={5} className="border-foreground" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="notes"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Internal Notes</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} rows={2} className="border-foreground" placeholder="Internal notes (not shown to customers)" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

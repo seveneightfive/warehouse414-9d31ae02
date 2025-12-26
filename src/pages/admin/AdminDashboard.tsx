@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Package, Clock, DollarSign, ShoppingCart, CheckCircle, AlertCircle } from 'lucide-react';
+import { Package, Clock, DollarSign, ShoppingCart, CheckCircle, AlertCircle, Archive } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function AdminDashboard() {
@@ -25,6 +25,7 @@ export default function AdminDashboard() {
         totalProducts: products.data?.length || 0,
         availableProducts: products.data?.filter(p => p.status === 'available').length || 0,
         soldProducts: products.data?.filter(p => p.status === 'sold').length || 0,
+        inventoryProducts: products.data?.filter(p => p.status === 'inventory').length || 0,
         activeHolds: activeHolds.length,
         totalOffers: offers.data?.length || 0,
         unreadOffers: unreadOffers.length,
@@ -58,6 +59,21 @@ export default function AdminDashboard() {
                   </span>
                   <span>{stats?.soldProducts || 0} sold</span>
                 </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/admin/inventory">
+            <Card className="border-2 border-foreground hover:bg-secondary transition-colors">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium">Inventory</CardTitle>
+                <Archive className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-display">{stats?.inventoryProducts || 0}</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Items not yet in shop
+                </p>
               </CardContent>
             </Card>
           </Link>

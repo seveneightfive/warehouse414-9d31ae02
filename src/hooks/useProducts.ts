@@ -20,6 +20,7 @@ export const useProducts = (filters: FilterState = {}) => {
           product_colors(color:colors(*)),
           product_images(*)
         `)
+        .in('status', ['available', 'on_hold', 'sold'])
         .order('created_at', { ascending: false });
 
       // Apply filters

@@ -134,13 +134,14 @@ export default function AdminProducts() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <DropdownMenu>
+                      <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
+                          <Button variant="ghost" size="icon" className="h-10 w-10 touch-manipulation">
+                            <MoreHorizontal className="h-5 w-5" />
+                            <span className="sr-only">Actions</span>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent align="end" className="min-w-[160px]">
                           <DropdownMenuItem asChild>
                             <Link to={`/product/${product.slug}`} target="_blank">
                               <ExternalLink className="mr-2 h-4 w-4" />

@@ -72,8 +72,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
           {product.designer && (
             <span>{product.designer.name}</span>
           )}
-          {product.year_created && (
-            <span>• {product.year_created}</span>
+          {product.maker && (
+            <span>• {product.maker_name}</span>
           )}
         </div>
 

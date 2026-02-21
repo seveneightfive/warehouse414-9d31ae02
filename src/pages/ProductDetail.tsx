@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useParallax } from "@/hooks/useParallax";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ const ProductDetail = () => {
   const { data: product, isLoading } = useProduct(slug || '');
   const actions = useProductActions();
   const [specSheetDialogOpen, setSpecSheetDialogOpen] = useState(false);
+  const { ref: parallaxRef, style: parallaxStyle } = useParallax(0.3);
 
   const formatPrice = (price: number | null) => {
     if (!price) return "Price on request";
@@ -123,12 +125,13 @@ const ProductDetail = () => {
       <RevealSection className="container mx-auto px-4 pb-20">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
           {/* Featured Image */}
-          <div className="aspect-square bg-muted overflow-hidden">
+          <div ref={parallaxRef} className="aspect-square bg-muted overflow-hidden">
             {heroImage ? (
               <img
                 src={heroImage.image_url}
                 alt={heroImage.alt_text || product.name}
                 className="w-full h-full object-cover"
+                style={parallaxStyle}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">

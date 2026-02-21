@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['Teko', 'sans-serif'],
+        display: ['Kabel', 'sans-serif'],
         body: ['Jost', 'sans-serif'],
         sans: ['Jost', 'sans-serif'],
       },

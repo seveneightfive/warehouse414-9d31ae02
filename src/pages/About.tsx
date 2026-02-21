@@ -2,6 +2,9 @@ import Layout from "@/components/layout/Layout";
 import RevealSection from "@/components/products/RevealSection";
 import { useParallax } from "@/hooks/useParallax";
 import { Link } from "react-router-dom";
+import aboutHero from "@/assets/about-hero.jpg";
+import aboutWaysToShop from "@/assets/about-ways-to-shop.jpg";
+import aboutBuying from "@/assets/about-buying.jpg";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const About = () => {
@@ -14,7 +17,7 @@ const About = () => {
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <div ref={parallax1.ref} className="absolute inset-0" style={parallax1.style}>
           <img
-            src={heroBg}
+            src={aboutHero}
             alt="Warehouse414 showroom"
             className="w-full h-full object-cover"
           />
@@ -90,6 +93,20 @@ const About = () => {
         </div>
       </section>
 
+      {/* Section 2.5 — Ken Burns reveal image */}
+      <section className="relative overflow-hidden">
+        <RevealSection className="w-full">
+          <div className="relative w-full h-[60vh] md:h-[75vh] overflow-hidden">
+            <img
+              src={aboutWaysToShop}
+              alt="Ways to shop at Warehouse414"
+              className="w-full h-full object-cover transition-transform duration-[8000ms] ease-out hover:scale-110"
+              style={{ transformOrigin: "center center" }}
+            />
+          </div>
+        </RevealSection>
+      </section>
+
       {/* Section 3 — Our Process */}
       <section className="py-20 md:py-32">
         <div className="container mx-auto px-4">
@@ -140,8 +157,8 @@ const About = () => {
       <section className="relative py-32 md:py-48 overflow-hidden">
         <div ref={parallax2.ref} className="absolute inset-0" style={parallax2.style}>
           <img
-            src={heroBg}
-            alt="Warehouse showroom"
+            src={aboutBuying}
+            alt="Warehouse414 art piece"
             className="w-full h-full object-cover"
           />
         </div>

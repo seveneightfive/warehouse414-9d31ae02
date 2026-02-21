@@ -192,11 +192,11 @@ const ProductDetail = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {tripleRow1.map((img, i) => (
               <RevealSection key={img.id} delay={i * 150}>
-                <div className="aspect-square bg-muted overflow-hidden">
+                <div className="aspect-square bg-muted overflow-hidden group">
                   <img
                     src={img.image_url}
                     alt={img.alt_text || `${product.name} - Image ${i + 2}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
                   />
                 </div>
               </RevealSection>
@@ -241,11 +241,11 @@ const ProductDetail = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {tripleRow2.map((img, i) => (
               <RevealSection key={img.id} delay={i * 150}>
-                <div className="aspect-square bg-muted overflow-hidden">
+                <div className="aspect-square bg-muted overflow-hidden group">
                   <img
                     src={img.image_url}
                     alt={img.alt_text || `${product.name} - Image ${i + 5}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
                   />
                 </div>
               </RevealSection>

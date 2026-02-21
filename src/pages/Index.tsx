@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import ProductGrid from "@/components/products/ProductGrid";
 import { useFeaturedProducts } from "@/hooks/useProducts";
+import heroBg from "@/assets/hero-bg.jpg";
 
 const Index = () => {
   const { data: featuredProducts, isLoading } = useFeaturedProducts(8);
@@ -11,40 +12,46 @@ const Index = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center bg-primary text-primary-foreground overflow-hidden">
-        {/* Stripe Pattern Background */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="w-full h-full stripe-pattern" style={{ transform: 'rotate(-5deg) scale(1.5)' }} />
-        </div>
-        
-        <div className="container mx-auto px-4 py-20 relative z-10">
-          <div className="max-w-3xl">
-            <h1 className="font-display text-5xl md:text-7xl lg:text-8xl leading-none mb-6 animate-fade-in">
-              CURATED VINTAGE
-              <br />
-              FURNITURE & ART
-            </h1>
-            <p className="font-body text-lg md:text-xl text-primary-foreground/80 mb-8 max-w-xl animate-fade-in" style={{ animationDelay: '100ms' }}>
-              One-of-a-kind pieces selected for exceptional design, 
-              quality craftsmanship, and timeless character.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in" style={{ animationDelay: '200ms' }}>
-              <Button 
-                asChild 
-                size="lg"
-                className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 font-body uppercase tracking-widest"
-              >
-                <Link to="/catalog">
-                  Browse Catalog
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
+      <section
+        className="relative min-h-[80vh] flex items-center justify-center overflow-hidden"
+        style={{
+          backgroundImage: `url(${heroBg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-foreground/40" />
 
-        {/* Decorative stripe element */}
-        <div className="absolute bottom-0 left-0 right-0 h-16 stripe-pattern" />
+        {/* Content card */}
+        <div className="relative z-10 w-full max-w-3xl mx-4 my-16 bg-background/90 backdrop-blur-sm p-8 md:p-14 text-center">
+          <p className="font-body text-xs md:text-sm uppercase tracking-[0.3em] text-muted-foreground mb-6">
+            curated treasures: unique antiques &amp; vintage finds
+          </p>
+          <h1 className="font-display text-3xl md:text-5xl lg:text-6xl mb-8">
+            discover one-of-a-kind antiques for every space
+          </h1>
+          <div className="space-y-4 font-body text-sm md:text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto mb-10">
+            <p>
+              Welcome to warehouse414, high-style home furnishing and collectibles. Our carefully selected and curated collections include antique furniture, original art and decorative vintage pieces that add character, history, and charm to any space.
+            </p>
+            <p>
+              Every item in our collection tells its own story; blend history with modern living. Whether you're an interior designer, home décor enthusiast, or simply searching for timeless antique furniture, warehouse414 offers a selection that inspires creativity and elevates your space.
+            </p>
+            <p>
+              Shop Now to bring home authentic antiques and vintage décor that transform your space into a showcase of style and sophistication.
+            </p>
+          </div>
+          <Button
+            asChild
+            size="lg"
+            className="font-body uppercase tracking-widest px-10"
+          >
+            <Link to="/catalog">
+              Shop Now
+            </Link>
+          </Button>
+        </div>
       </section>
 
       {/* Featured Products */}

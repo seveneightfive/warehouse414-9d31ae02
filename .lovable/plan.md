@@ -1,22 +1,44 @@
 
-## Add Parallax Scrolling to Product Detail Hero Image
+
+## Redesign About Page to Match warehouse414.com Style
 
 ### What Changes
-A smooth parallax effect will be added to the hero (featured) image in Section 1 of the product detail page. As the user scrolls down, the image will move at a slower rate than the rest of the content, creating a subtle depth effect.
+The About page will be completely redesigned to mirror the warehouse414.com/about-us layout, featuring a full-bleed hero with centered content card, a two-column story section, and scroll-reveal animations throughout. The copy in the first section will be updated as specified.
 
-### Approach
-Create a custom `useParallax` hook that listens to the scroll position and applies a `translateY` transform to the hero image. The image will shift vertically at roughly 30% of the scroll speed, giving a cinematic parallax feel without being jarring.
+### Layout Sections
+
+**Section 1 -- Full-Bleed Hero**
+- Full-viewport-height background image using the existing `hero-bg.jpg` showroom photo
+- Semi-transparent dark overlay for contrast
+- Centered white content card floating over the image with:
+  - Small label: "Curated Treasures"
+  - Large heading: "warehouse four fourteen"
+  - Body text with the user-provided copy about great design transcending eras
+  - "View Collection" button linking to `/catalog`
+
+**Section 2 -- Our Story (two-column)**
+- Light gray/secondary background
+- Left column: heading "Discover Our Passion and Purpose" + paragraphs about the shop's location, mission, and inventory
+- Right column: placeholder area for a future image (using the showroom photo for now)
+- Scroll-reveal animation on both columns
+
+**Section 3 -- Our Process (three-column grid)**
+- Keep the existing Sourcing / Documentation / Delivery cards but style them with the stripe pattern icons and reveal animations
+
+**Section 4 -- Buying and Selling**
+- Full-width background image section (reuse hero-bg.jpg with parallax)
+- White text overlay with heading "buying & selling"
+- Short blurb about selling items + "Send Email" button linking to `/contact`
 
 ### Technical Details
 
-**New file: `src/hooks/useParallax.ts`**
-- A lightweight hook using `useEffect` + `useRef` + `requestAnimationFrame` to track scroll position
-- Returns a `ref` to attach to the parallax container and a `style` object with the computed `transform`
-- Uses a configurable speed factor (default 0.3)
-- Cleans up the scroll listener on unmount
+**Modified file: `src/pages/About.tsx`**
+- Complete rewrite of JSX structure into 4 sections
+- Import `RevealSection` component for scroll animations
+- Import `useParallax` hook for the hero and buying/selling background sections
+- Import `hero-bg.jpg` for backgrounds
+- Import `Link` from react-router-dom for the "View Collection" button
+- Use existing Tailwind utilities and brand classes (`font-display`, `font-body`, `stripe-border`)
 
-**Modified file: `src/pages/ProductDetail.tsx`**
-- Import and use the `useParallax` hook
-- Wrap the hero image `<img>` in a container that clips overflow and apply the parallax transform via the hook's returned style
-- The image will be scaled slightly larger (scale 1.2) so parallax movement doesn't reveal empty space
-- Only the Section 1 hero image gets the parallax effect; other sections remain unchanged
+No new files or database changes needed.
+

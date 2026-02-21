@@ -1,31 +1,22 @@
 
+## Add Parallax Scrolling to Product Detail Hero Image
 
-## Redesign Home Page Hero Section
+### What Changes
+A smooth parallax effect will be added to the hero (featured) image in Section 1 of the product detail page. As the user scrolls down, the image will move at a slower rate than the rest of the content, creating a subtle depth effect.
 
-### Layout
-Based on the reference screenshots (especially the second one), the hero will feature:
-- A full-bleed background image covering the entire hero section
-- A centered, semi-transparent white content card overlaying the image
-- Text content centered within the card
-- A "Shop Now" CTA button
+### Approach
+Create a custom `useParallax` hook that listens to the scroll position and applies a `translateY` transform to the hero image. The image will shift vertically at roughly 30% of the scroll speed, giving a cinematic parallax feel without being jarring.
 
-### Content Structure
-1. **Eyebrow text**: "curated treasures: unique antiques & vintage finds"
-2. **Main heading**: "Discover One-of-a-Kind Antiques for Every Space"
-3. **Body paragraph 1**: "Welcome to warehouse414, high-style home furnishing and collectibles. Our carefully selected and curated collections include antique furniture, original art and decorative vintage pieces that add character, history, and charm to any space."
-4. **Body paragraph 2**: "Every item in our collection tells its own story; blend history with modern living. Whether you're an interior designer, home decor enthusiast, or simply searching for timeless antique furniture, warehouse414 offers a selection that inspires creativity and elevates your space."
-5. **Body paragraph 3**: "Shop Now to bring home authentic antiques and vintage decor that transform your space into a showcase of style and sophistication."
-6. **CTA Button**: "Shop Now" linking to /catalog
+### Technical Details
 
-### Background Image
-Since there's no actual warehouse414 showroom photo in the project assets, I'll use the warehouse414 logo image as a placeholder and style the hero with a dark overlay. Alternatively, we can use a CSS gradient/pattern background that fits the brand until a real hero image is provided.
+**New file: `src/hooks/useParallax.ts`**
+- A lightweight hook using `useEffect` + `useRef` + `requestAnimationFrame` to track scroll position
+- Returns a `ref` to attach to the parallax container and a `style` object with the computed `transform`
+- Uses a configurable speed factor (default 0.3)
+- Cleans up the scroll listener on unmount
 
-### Technical Changes
-**File: `src/pages/Index.tsx`**
-- Replace the current hero section (black background with stripe pattern) with the new layout:
-  - Full-height section with a background image (or dark styled background as placeholder)
-  - Centered white/light card with the content
-  - Responsive padding and text sizing
-
-The rest of the page (Recent Additions, About Teaser, CTA) remains unchanged.
-
+**Modified file: `src/pages/ProductDetail.tsx`**
+- Import and use the `useParallax` hook
+- Wrap the hero image `<img>` in a container that clips overflow and apply the parallax transform via the hook's returned style
+- The image will be scaled slightly larger (scale 1.2) so parallax movement doesn't reveal empty space
+- Only the Section 1 hero image gets the parallax effect; other sections remain unchanged

@@ -1,44 +1,27 @@
 
 
-## Redesign About Page to Match warehouse414.com Style
+## Update Footer: Remove Text, Lowercase Links, Add Social/Marketplace Icons
 
-### What Changes
-The About page will be completely redesigned to mirror the warehouse414.com/about-us layout, featuring a full-bleed hero with centered content card, a two-column story section, and scroll-reveal animations throughout. The copy in the first section will be updated as specified.
+### Changes to `src/components/layout/Footer.tsx`
 
-### Layout Sections
+**1. Remove description text**
+- Delete the `<p>` block with "Curating exceptional vintage furniture..." so the Brand column only has the logo.
 
-**Section 1 -- Full-Bleed Hero**
-- Full-viewport-height background image using the existing `hero-bg.jpg` showroom photo
-- Semi-transparent dark overlay for contrast
-- Centered white content card floating over the image with:
-  - Small label: "Curated Treasures"
-  - Large heading: "warehouse four fourteen"
-  - Body text with the user-provided copy about great design transcending eras
-  - "View Collection" button linking to `/catalog`
+**2. Lowercase navigation links**
+- Change "Catalog" to "catalog", "About Us" to "about us", "Contact" to "contact"
 
-**Section 2 -- Our Story (two-column)**
-- Light gray/secondary background
-- Left column: heading "Discover Our Passion and Purpose" + paragraphs about the shop's location, mission, and inventory
-- Right column: placeholder area for a future image (using the showroom photo for now)
-- Scroll-reveal animation on both columns
-
-**Section 3 -- Our Process (three-column grid)**
-- Keep the existing Sourcing / Documentation / Delivery cards but style them with the stripe pattern icons and reveal animations
-
-**Section 4 -- Buying and Selling**
-- Full-width background image section (reuse hero-bg.jpg with parallax)
-- White text overlay with heading "buying & selling"
-- Short blurb about selling items + "Send Email" button linking to `/contact`
+**3. Add social and marketplace icons row**
+- Add a new row (flex) of icon links in the footer, likely in the Brand column or as a standalone section:
+  - **Facebook** -- use `Facebook` icon from `lucide-react`, links to `https://www.facebook.com/p/Warehouse-414-new-61574405447016/`
+  - **Instagram** -- use `Instagram` icon from `lucide-react`, links to `https://www.instagram.com/warehouse4one4/`
+  - **1stDibs** -- render a small inline SVG or text logo "1stDibs" (no lucide icon exists), links to `https://www.1stdibs.com/dealers/warehouse-414/`
+  - **Chairish** -- render a small text logo "Chairish" (no lucide icon exists), links to `https://www.chairish.com/shop/warehouse414`
+  - **eBay** -- render a small text logo "eBay" (no lucide icon exists), links to `https://www.ebay.com/str/warehouse414`
+- All external links use `target="_blank"` and `rel="noopener noreferrer"`
 
 ### Technical Details
 
-**Modified file: `src/pages/About.tsx`**
-- Complete rewrite of JSX structure into 4 sections
-- Import `RevealSection` component for scroll animations
-- Import `useParallax` hook for the hero and buying/selling background sections
-- Import `hero-bg.jpg` for backgrounds
-- Import `Link` from react-router-dom for the "View Collection" button
-- Use existing Tailwind utilities and brand classes (`font-display`, `font-body`, `stripe-border`)
-
-No new files or database changes needed.
+- Import `Facebook` and `Instagram` from `lucide-react`
+- For 1stDibs, Chairish, and eBay: use styled text labels (small, uppercase/branded font) since there are no built-in icons for these marketplaces
+- Place the icon row below the logo in the Brand column, with consistent sizing and hover effects matching the existing footer style
 

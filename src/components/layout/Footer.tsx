@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Facebook, Instagram } from "lucide-react";
 import warehouseLogo from "@/assets/warehouse414-logo.jpg";
 
 const Footer = () => {
@@ -11,14 +12,25 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="md:col-span-2">
-            <div className="flex items-start gap-6 mb-4">
-              <Link to="/">
-                <img src={warehouseLogo} alt="Warehouse 414" className="w-24 md:w-32 h-auto" />
-              </Link>
-              <p className="font-body text-sm text-primary-foreground/70 max-w-sm text-left">
-                Curating exceptional vintage furniture and art pieces. Each item is unique, carefully selected for its
-                design significance and quality craftsmanship.
-              </p>
+            <Link to="/" className="inline-block mb-6">
+              <img src={warehouseLogo} alt="Warehouse 414" className="w-24 md:w-32 h-auto" />
+            </Link>
+            <div className="flex items-center gap-4 flex-wrap">
+              <a href="https://www.facebook.com/p/Warehouse-414-new-61574405447016/" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors">
+                <Facebook size={20} />
+              </a>
+              <a href="https://www.instagram.com/warehouse4one4/" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors">
+                <Instagram size={20} />
+              </a>
+              <a href="https://www.1stdibs.com/dealers/warehouse-414/" target="_blank" rel="noopener noreferrer" className="font-display text-xs tracking-wider text-primary-foreground/70 hover:text-primary-foreground transition-colors">
+                1stDibs
+              </a>
+              <a href="https://www.chairish.com/shop/warehouse414" target="_blank" rel="noopener noreferrer" className="font-display text-xs tracking-wider text-primary-foreground/70 hover:text-primary-foreground transition-colors">
+                Chairish
+              </a>
+              <a href="https://www.ebay.com/str/warehouse414" target="_blank" rel="noopener noreferrer" className="font-display text-xs tracking-wider text-primary-foreground/70 hover:text-primary-foreground transition-colors">
+                eBay
+              </a>
             </div>
           </div>
 
@@ -30,19 +42,19 @@ const Footer = () => {
                 to="/catalog"
                 className="font-body text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors"
               >
-                Catalog
+                catalog
               </Link>
               <Link
                 to="/about"
                 className="font-body text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors"
               >
-                About Us
+                about us
               </Link>
               <Link
                 to="/contact"
                 className="font-body text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors"
               >
-                Contact
+                contact
               </Link>
             </nav>
           </div>
